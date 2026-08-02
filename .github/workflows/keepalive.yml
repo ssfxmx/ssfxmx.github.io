@@ -1,0 +1,30 @@
+name: Mantener Supabase activo
+
+# En el plan gratuito, un proyecto de Supabase sin actividad durante varios días
+# se suspende y el sitio deja de funcionar hasta reactivarlo a mano. Una consulta
+# trivial cada tres días lo evita.
+#
+# Se consulta la tabla de personajes: es pública, diminuta y su política RLS ya
+# permite lectura anónima, así que no hace falta ninguna credencial secreta.
+
+on:
+  schedule:
+    - cron: '0 12 */3 * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Consultar Supabase
+        run: |
+          set -a; source .env.production; set +a
+          code=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${VITE_SUPABASE_URL}/rest/v1/characters?select=id&limit=1" \
+            -H "apikey: ${VITE_SUPABASE_PUBLISHABLE_KEY}")
+          echo "Respuesta: $code"
+          if [ "$code" != "200" ]; then
+            echo "::warning::Supabase respondió $code en lugar de 200"
+          fi

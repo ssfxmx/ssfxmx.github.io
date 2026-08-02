@@ -1,0 +1,127 @@
+@import './tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-base text-ink font-sans antialiased;
+    min-height: 100vh;
+  }
+
+  /* Textura sutil de CRT sobre todo el sitio. Muy tenue a propósito:
+     si un efecto compite con el contenido, sobra. */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgb(0 0 0 / var(--scanline-opacity)) 0px,
+      rgb(0 0 0 / var(--scanline-opacity)) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  }
+
+  /* Foco visible siempre: navegar con teclado no debería ser adivinar. */
+  :focus-visible {
+    @apply outline-none ring-2 ring-cyan ring-offset-2 ring-offset-base;
+  }
+
+  ::selection {
+    @apply bg-primary/30 text-ink;
+  }
+
+  /* Barra de desplazamiento acorde a la paleta */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-base;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-edge rounded;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary/50;
+  }
+}
+
+@layer components {
+  /* Panel con esquina biselada: la firma visual del sitio.
+     Recuerda a los marcos de las interfaces de gabinete sin copiar ninguna. */
+  .arcade-clip {
+    clip-path: polygon(
+      0 0,
+      calc(100% - 14px) 0,
+      100% 14px,
+      100% 100%,
+      14px 100%,
+      0 calc(100% - 14px)
+    );
+  }
+
+  /* Texto de título con resplandor tenue de tubo de neón */
+  .neon-text {
+    text-shadow:
+      0 0 8px rgb(var(--color-primary) / 0.5),
+      0 0 24px rgb(var(--color-primary) / 0.2);
+  }
+
+  /* Contenido en Markdown: noticias y tutoriales */
+  .prose-arcade {
+    @apply text-ink-soft leading-relaxed;
+  }
+  .prose-arcade h2 {
+    @apply font-display text-primary text-base mt-10 mb-4 leading-relaxed;
+  }
+  .prose-arcade h3 {
+    @apply font-semibold text-ink text-lg mt-8 mb-3;
+  }
+  .prose-arcade p {
+    @apply mb-4;
+  }
+  .prose-arcade a {
+    @apply text-cyan underline underline-offset-4 hover:text-primary transition-colors;
+  }
+  .prose-arcade ul {
+    @apply list-disc pl-6 mb-4 space-y-1;
+  }
+  .prose-arcade ol {
+    @apply list-decimal pl-6 mb-4 space-y-1;
+  }
+  .prose-arcade code {
+    @apply bg-surface-raised text-primary px-1.5 py-0.5 rounded text-sm font-mono;
+  }
+  .prose-arcade pre {
+    @apply bg-surface border border-edge rounded-lg p-4 overflow-x-auto mb-4 text-sm;
+  }
+  .prose-arcade pre code {
+    @apply bg-transparent p-0 text-ink-soft;
+  }
+  .prose-arcade blockquote {
+    @apply border-l-2 border-primary pl-4 italic text-ink-dim my-4;
+  }
+  .prose-arcade img {
+    @apply rounded-lg border border-edge my-6 max-w-full;
+  }
+  .prose-arcade table {
+    @apply w-full text-sm mb-4 border border-edge;
+  }
+  .prose-arcade th {
+    @apply bg-surface-raised text-ink px-3 py-2 text-left font-semibold;
+  }
+  .prose-arcade td {
+    @apply border-t border-edge px-3 py-2;
+  }
+}

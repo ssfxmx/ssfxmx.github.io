@@ -1,0 +1,51 @@
+/**
+ * Tokens del sistema de diseño.
+ *
+ * Único lugar donde viven los colores. Se declaran como canales RGB sueltos
+ * (sin la función rgb()) para que Tailwind pueda aplicarles opacidad con la
+ * sintaxis bg-primary/20.
+ *
+ * Paleta: sala de máquinas de noche. Fondo casi negro con un tinte azulado,
+ * ámbar de gabinete como color principal, cian y magenta como acentos de
+ * letrero de neón. El neón puro sobre negro cansa la vista, así que se usa
+ * como acento y nunca como color de párrafo.
+ */
+
+:root {
+  /* Superficies */
+  --color-base: 11 11 18;
+  --color-surface: 20 20 31;
+  --color-surface-raised: 30 30 45;
+  --color-edge: 46 46 69;
+
+  /* Acentos */
+  --color-primary: 255 176 0;
+  --color-cyan: 0 229 255;
+  --color-magenta: 255 46 136;
+  --color-success: 61 220 132;
+  --color-danger: 255 71 87;
+
+  /* Texto — contraste verificado AA (4.5:1) sobre --color-base */
+  --color-ink: 242 242 247;
+  --color-ink-soft: 160 160 184;
+  --color-ink-dim: 122 122 146;
+
+  /* Intensidad de las scanlines. Se pone a 0 con prefers-reduced-motion. */
+  --scanline-opacity: 0.025;
+}
+
+/* Los efectos son condimento, no plato principal.
+   Quien pide menos movimiento, recibe cero efectos. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --scanline-opacity: 0;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

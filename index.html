@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="es-MX">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0B0B12" />
+
+    <!-- Estas etiquetas son la plantilla por defecto. El script de
+         prerenderizado (scripts/prerender.mjs) las sustituye por las de cada
+         noticia, evento o tutorial al compilar, para que los enlaces
+         compartidos en WhatsApp y Discord muestren título e imagen. -->
+    <title>SSF2X México — Comunidad de Super Street Fighter II X</title>
+    <meta name="description" content="La comunidad mexicana de Super Street Fighter II X Grand Master Challenge. Torneos mensuales, resultados, jugadores y guías." />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="SSF2X México" />
+    <meta property="og:title" content="SSF2X México" />
+    <meta property="og:description" content="Torneos mensuales, resultados y comunidad. Desde 1994, seguimos jugando." />
+    <meta property="og:locale" content="es_MX" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Tipografías con licencia libre (SIL OFL).
+         Press Start 2P: títulos cortos. Inter: cuerpo de texto. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
