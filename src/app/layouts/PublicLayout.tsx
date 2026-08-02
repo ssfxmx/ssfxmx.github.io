@@ -5,6 +5,7 @@ import { MAIN_NAV, routes } from '@/shared/constants/routes';
 import { useSession } from '@/modules/auth/hooks/useSession';
 import { signOut } from '@/modules/auth/services/auth.service';
 import { Button, LinkButton } from '@/shared/components/ui';
+import { SocialLinks } from '@/shared/components/ui/SocialLinks';
 
 /**
  * Estructura del sitio público: cabecera, contenido y pie.
@@ -39,9 +40,15 @@ export function PublicLayout() {
     navigate(routes.home);
   }
 
+  /**
+   * `whitespace-nowrap` e `inline-flex` son lo que impide que el emoji salte a
+   * una línea propia encima del texto. Con siete apartados más sus emoji, la
+   * barra roza el ancho disponible y el navegador partía cada enlace en dos
+   * renglones.
+   */
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     [
-      'px-3 py-2 text-sm transition-colors',
+      'inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap px-2.5 py-2 text-sm transition-colors',
       isActive ? 'text-primary' : 'text-ink-soft hover:text-ink',
     ].join(' ');
 
@@ -60,8 +67,8 @@ export function PublicLayout() {
           <nav className="hidden items-center lg:flex">
             {MAIN_NAV.map((item) => (
               <NavLink key={item.to} to={item.to} end={item.to === routes.home} className={navLinkClass}>
-                <span aria-hidden className="mr-1.5">{item.emoji}</span>
-                {item.label}
+                <span aria-hidden>{item.emoji}</span>
+                <span>{item.label}</span>
               </NavLink>
             ))}
           </nav>
@@ -189,6 +196,10 @@ export function PublicLayout() {
                 Comunidad mexicana de Super Street Fighter II X Grand Master Challenge.
                 Hecho por fanáticos, para fanáticos.
               </p>
+
+              <div className="mt-5">
+                <SocialLinks />
+              </div>
             </div>
             <nav className="flex flex-col gap-2 text-sm">
               {MAIN_NAV.map((item) => (

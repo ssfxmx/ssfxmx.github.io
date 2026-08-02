@@ -35,6 +35,7 @@ import { AdminResultsForm, AdminResultsList } from '@/modules/admin/pages/AdminR
 import { AdminPlayersList } from '@/modules/admin/pages/AdminPlayers';
 import { AdminCharactersPage } from '@/modules/admin/pages/AdminCharacters';
 import { AdminCitiesPage } from '@/modules/admin/pages/AdminCities';
+import { AdminReportsPage } from '@/modules/admin/pages/AdminReports';
 import {
   AdminTutorialForm,
   AdminTutorialsList,
@@ -155,16 +156,7 @@ export const router = createBrowserRouter(
         { path: routes.adminSettings, element: <AdminSettingsPage /> },
 
         // Módulos preparados: la ruta, el permiso y el menú ya funcionan.
-        {
-          path: routes.adminReports,
-          element: (
-            <ComingSoonPage
-              title="REPORTES"
-              description="Estadísticas de jugadores, personajes y torneos."
-              phase="Fase 3"
-            />
-          ),
-        },
+        { path: routes.adminReports, element: <AdminReportsPage /> },
         {
           path: routes.adminOverlays,
           element: (

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Clock, GraduationCap, ListOrdered } from 'lucide-react';
 import { routes } from '@/shared/constants/routes';
@@ -17,11 +17,31 @@ import {
 import type { Tutorial } from '@/shared/types/database';
 import { useTutorialCategories, useTutorialDetail, useTutorials } from '../hooks';
 
-function TutorialCard({ tutorial }: { tutorial: Tutorial }) {
+function TutorialCard({
+  tutorial,
+  categoryName,
+}: {
+  tutorial: Tutorial;
+  categoryName?: string | null;
+}) {
   return (
-    <Link to={routes.tutorialDetail(tutorial.slug)} className="group block">
-      <ArcadePanel className="h-full p-5 transition-colors group-hover:border-primary/60">
-        <div className="mb-3 flex flex-wrap items-center gap-2">
+    <Link to={routes.tutorialDetail(tutorial.slug)} className="group block h-full">
+      <ArcadePanel className="flex h-full flex-col p-5 transition-colors group-hover:border-primary/60">
+        {categoryName && (
+          <p className="mb-3 flex items-center gap-1.5 font-display text-[9px] uppercase tracking-wider text-steel">
+            <GraduationCap size={12} /> {categoryName}
+          </p>
+        )}
+
+        <h3 className="font-semibold leading-snug text-ink group-hover:text-primary">
+          {tutorial.title}
+        </h3>
+
+        <p className="mt-2 flex-1 text-sm leading-relaxed text-ink-soft">
+          {tutorial.summary || truncate(stripMarkdown(tutorial.body_md), 120)}
+        </p>
+
+        <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-edge pt-3">
           <Badge tone={tutorial.difficulty === 1 ? 'success' : tutorial.difficulty === 2 ? 'primary' : 'danger'}>
             {DIFFICULTY_LABELS[tutorial.difficulty] ?? 'Guía'}
           </Badge>
@@ -31,36 +51,44 @@ function TutorialCard({ tutorial }: { tutorial: Tutorial }) {
             </span>
           )}
         </div>
-
-        <h3 className="font-semibold leading-snug text-ink group-hover:text-primary">
-          {tutorial.title}
-        </h3>
-
-        <p className="mt-2 text-sm leading-relaxed text-ink-soft">
-          {tutorial.summary || truncate(stripMarkdown(tutorial.body_md), 120)}
-        </p>
       </ArcadePanel>
     </Link>
   );
 }
 
+/**
+ * Listado de tutoriales.
+ *
+ * ANTES: una sección por categoría, cada una con su propia cuadrícula. Con una
+ * o dos guías por categoría, cada sección ocupaba una fila entera para mostrar
+ * una sola tarjeta estrecha, y la página se estiraba hacia abajo obligando a
+ * desplazarse para ver tres guías.
+ *
+ * AHORA: una sola cuadrícula con todas las guías, y la categoría como filtro
+ * arriba. Se ven todas de un vistazo, y sigue funcionando igual de bien cuando
+ * haya treinta.
+ */
 export function TutorialsListPage() {
   const { data: tutorials, isLoading, isError, refetch } = useTutorials();
   const { data: categories } = useTutorialCategories();
+  const [categoryId, setCategoryId] = useState<number | null>(null);
 
-  /** Agrupa por categoría respetando el orden del catálogo. */
-  const grouped = useMemo(() => {
+  /** Solo las categorías que tienen guías: filtrar por una vacía frustra. */
+  const usedCategories = useMemo(() => {
     if (!tutorials || !categories) return [];
-
-    return categories
-      .map((category) => ({
-        category,
-        items: tutorials.filter((tutorial) => tutorial.category_id === category.id),
-      }))
-      .filter((group) => group.items.length > 0);
+    return categories.filter((category) =>
+      tutorials.some((tutorial) => tutorial.category_id === category.id)
+    );
   }, [tutorials, categories]);
 
-  const uncategorized = tutorials?.filter((tutorial) => !tutorial.category_id) ?? [];
+  const visible = useMemo(() => {
+    if (!tutorials) return [];
+    if (categoryId === null) return tutorials;
+    return tutorials.filter((tutorial) => tutorial.category_id === categoryId);
+  }, [tutorials, categoryId]);
+
+  const categoryName = (id: number | null) =>
+    categories?.find((category) => category.id === id)?.name ?? null;
 
   return (
     <>
@@ -74,46 +102,51 @@ export function TutorialsListPage() {
       {isLoading && <Spinner />}
       {isError && <ErrorState onRetry={() => refetch()} />}
 
-      {!isLoading && grouped.length === 0 && uncategorized.length === 0 && (
+      {!isLoading && (tutorials?.length ?? 0) === 0 && (
         <EmptyState
           title="Todavía no hay guías"
           message="La primera será cómo instalar Fightcade."
         />
       )}
 
-      <div className="space-y-12">
-        {grouped.map(({ category, items }) => (
-          <section key={category.id}>
-            <div className="mb-4 flex items-center gap-3">
-              <GraduationCap size={18} className="text-primary" />
-              <div>
-                <h3 className="font-display text-xs text-steel">
-                  {category.name.toUpperCase()}
-                </h3>
-                {category.description && (
-                  <p className="mt-1 text-xs text-ink-dim">{category.description}</p>
-                )}
-              </div>
-            </div>
+      {usedCategories.length > 1 && (
+        <div className="mb-8 flex flex-wrap gap-2">
+          <button
+            onClick={() => setCategoryId(null)}
+            className={[
+              'rounded border px-3 py-1.5 text-xs transition-colors',
+              categoryId === null
+                ? 'border-primary bg-primary/15 text-primary'
+                : 'border-edge text-ink-soft hover:border-steel hover:text-steel',
+            ].join(' ')}
+          >
+            Todas
+          </button>
+          {usedCategories.map((category) => (
+            <button
+              key={category.id}
+              onClick={() => setCategoryId(category.id)}
+              className={[
+                'rounded border px-3 py-1.5 text-xs transition-colors',
+                categoryId === category.id
+                  ? 'border-primary bg-primary/15 text-primary'
+                  : 'border-edge text-ink-soft hover:border-steel hover:text-steel',
+              ].join(' ')}
+            >
+              {category.name}
+            </button>
+          ))}
+        </div>
+      )}
 
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {items.map((tutorial) => (
-                <TutorialCard key={tutorial.id} tutorial={tutorial} />
-              ))}
-            </div>
-          </section>
+      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        {visible.map((tutorial) => (
+          <TutorialCard
+            key={tutorial.id}
+            tutorial={tutorial}
+            categoryName={categoryName(tutorial.category_id)}
+          />
         ))}
-
-        {uncategorized.length > 0 && (
-          <section>
-            <h3 className="mb-4 font-display text-xs text-steel">OTRAS GUÍAS</h3>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {uncategorized.map((tutorial) => (
-                <TutorialCard key={tutorial.id} tutorial={tutorial} />
-              ))}
-            </div>
-          </section>
-        )}
       </div>
     </>
   );

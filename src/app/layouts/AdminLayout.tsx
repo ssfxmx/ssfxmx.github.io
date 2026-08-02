@@ -41,7 +41,7 @@ const SECTIONS = [
   {
     title: '🔧 Sistema',
     items: [
-      { to: routes.adminReports, label: 'Reportes', emoji: '📈', soon: true },
+      { to: routes.adminReports, label: 'Reportes', emoji: '📈' },
       { to: routes.adminSettings, label: 'Configuración', emoji: '⚙️' },
     ],
   },
