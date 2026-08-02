@@ -104,6 +104,44 @@ export async function setPlayerStatus(playerId: string, status: AccountStatus) {
   if (error) throw error;
 }
 
+export interface AdminPlayerEdit {
+  nickname: string;
+  city: string | null;
+  country_code: string;
+  bio: string | null;
+  main_character_id: number | null;
+}
+
+/**
+ * Edita el perfil de otro jugador.
+ *
+ * Existe porque un administrador necesita poder corregir un nickname ofensivo,
+ * resolver una suplantación o arreglar un dato mal capturado sin pedirle al
+ * jugador que lo haga.
+ *
+ * No incluye el avatar a propósito: las políticas de Storage solo permiten
+ * escribir dentro de la carpeta del propio usuario. Un administrador puede
+ * BORRAR un avatar inapropiado, pero no subir uno en nombre de otra persona.
+ * Es la frontera correcta: moderar sí, suplantar no.
+ *
+ * El rol y el estado no se tocan aquí; tienen sus propias funciones para que
+ * cada acción privilegiada quede registrada por separado en la auditoría.
+ */
+export async function updatePlayerAsAdmin(playerId: string, input: AdminPlayerEdit) {
+  const { error } = await supabase
+    .from('profiles')
+    .update({
+      nickname: input.nickname.trim(),
+      city: input.city,
+      country_code: input.country_code,
+      bio: input.bio,
+      main_character_id: input.main_character_id,
+    })
+    .eq('id', playerId);
+
+  if (error) throw error;
+}
+
 /**
  * Cambia el rol de un jugador.
  *

@@ -62,6 +62,15 @@ export function useSetPlayerStatus() {
   });
 }
 
+export function useUpdatePlayer() {
+  const invalidate = useInvalidatePlayers();
+  return useMutation({
+    mutationFn: ({ id, input }: { id: string; input: service.AdminPlayerEdit }) =>
+      service.updatePlayerAsAdmin(id, input),
+    onSuccess: invalidate,
+  });
+}
+
 export function useSetPlayerRole() {
   const invalidate = useInvalidatePlayers();
   return useMutation({
