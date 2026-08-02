@@ -10,6 +10,7 @@ import {
   Monitor,
   Newspaper,
   Settings,
+  Swords,
   Trophy,
   Users,
   Vote,
@@ -39,7 +40,10 @@ const SECTIONS = [
   },
   {
     title: 'Comunidad',
-    items: [{ to: routes.adminPlayers, label: 'Jugadores', icon: Users }],
+    items: [
+      { to: routes.adminPlayers, label: 'Jugadores', icon: Users },
+      { to: routes.adminCharacters, label: 'Personajes', icon: Swords },
+    ],
   },
   {
     title: 'Stream',

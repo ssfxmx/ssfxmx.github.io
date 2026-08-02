@@ -25,6 +25,8 @@ interface AvatarInput {
   nickname?: string | null;
   character_initials?: string | null;
   character_color?: string | null;
+  /** Icono del personaje subido desde el panel, si existe. */
+  character_icon_path?: string | null;
 }
 
 /** Color estable derivado del texto, para quien no tiene personaje asignado. */
@@ -75,11 +77,25 @@ export function monogramDataUri(initials: string, color: string): string {
 
 /**
  * Resuelve la imagen de avatar de un jugador.
- * Prioridad: imagen subida → monograma del personaje → monograma del nickname.
+ *
+ * Orden de preferencia:
+ *   1. Imagen subida por el propio usuario
+ *   2. Icono del personaje, si el administrador subió uno
+ *   3. Monograma generado por código
+ *
+ * Los tres conviven a propósito. Si un personaje no tiene icono, su avatar
+ * sigue funcionando; y si algún día hay que retirar los iconos, basta con
+ * vaciar la columna: el monograma vuelve a cubrir el hueco sin tocar código ni
+ * dejar avatares rotos.
  */
 export function resolveAvatar(input: AvatarInput): string {
   if (input.avatar_source === 'upload' && input.avatar_path) {
     const url = storagePublicUrl('avatars', input.avatar_path);
+    if (url) return url;
+  }
+
+  if (input.character_icon_path) {
+    const url = storagePublicUrl('media', input.character_icon_path);
     if (url) return url;
   }
 

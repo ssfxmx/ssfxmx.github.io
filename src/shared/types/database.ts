@@ -173,6 +173,7 @@ export interface PlayerPublic {
   character_name: string | null;
   character_color: string | null;
   character_initials: string | null;
+  character_icon_path: string | null;
 }
 
 export interface EventResultPublic {
@@ -193,6 +194,8 @@ export interface EventResultPublic {
   character_name: string | null;
   character_slug: string | null;
   character_color: string | null;
+  character_initials: string | null;
+  character_icon_path: string | null;
   notes: string | null;
 }
 
