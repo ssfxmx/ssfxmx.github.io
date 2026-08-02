@@ -115,6 +115,40 @@ export function resolveAvatar(input: AvatarInput): string {
  * límite de 512 KB también está declarado en el servidor (0009_storage.sql):
  * la validación del cliente se puede saltar, la del servidor no.
  */
+/**
+ * Prepara un logotipo para la web: conserva la proporción, limita la altura y
+ * convierte a WebP con transparencia.
+ *
+ * A diferencia del avatar, aquí NO se recorta en cuadrado: un logotipo recortado
+ * es un logotipo roto.
+ */
+export async function prepareLogoFile(file: File, maxHeight = 448): Promise<Blob> {
+  const bitmap = await createImageBitmap(file);
+
+  const scale = Math.min(1, maxHeight / bitmap.height);
+  const width = Math.round(bitmap.width * scale);
+  const height = Math.round(bitmap.height * scale);
+
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('No se pudo procesar la imagen en este navegador.');
+
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(bitmap, 0, 0, width, height);
+  bitmap.close();
+
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => (blob ? resolve(blob) : reject(new Error('No se pudo convertir la imagen.'))),
+      'image/webp',
+      0.9
+    );
+  });
+}
+
 export async function prepareAvatarFile(file: File, size = 256): Promise<Blob> {
   const bitmap = await createImageBitmap(file);
 

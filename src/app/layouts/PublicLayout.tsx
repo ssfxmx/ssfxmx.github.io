@@ -6,6 +6,7 @@ import { useSession } from '@/modules/auth/hooks/useSession';
 import { signOut } from '@/modules/auth/services/auth.service';
 import { Button, LinkButton } from '@/shared/components/ui';
 import { SocialLinks } from '@/shared/components/ui/SocialLinks';
+import { useLogoUrl } from '@/shared/hooks';
 
 /**
  * Estructura del sitio público: cabecera, contenido y pie.
@@ -18,6 +19,7 @@ export function PublicLayout() {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const logoUrl = useLogoUrl();
 
   // Se cierra al cambiar de página. Sin esto, navegar desde el menú deja la
   // capa abierta encima del contenido nuevo.
@@ -62,7 +64,7 @@ export function PublicLayout() {
               reserve el espacio y la cabecera no dé un salto al cargar. */}
           <Link to={routes.home} className="flex shrink-0 items-center">
             <img
-              src={`${import.meta.env.VITE_BASE_PATH || '/'}logo.webp`}
+              src={logoUrl}
               alt="SSF2X México"
               width={334}
               height={224}
@@ -73,7 +75,7 @@ export function PublicLayout() {
           {/* Navegación de escritorio */}
           <nav className="hidden items-center lg:flex">
             {MAIN_NAV.map((item) => (
-              <NavLink key={item.to} to={item.to} end={item.to === routes.home} className={navLinkClass}>
+              <NavLink key={item.to} to={item.to} className={navLinkClass}>
                 <span aria-hidden>{item.emoji}</span>
                 <span>{item.label}</span>
               </NavLink>
@@ -132,7 +134,7 @@ export function PublicLayout() {
         <div className="fixed inset-0 z-[60] flex flex-col overflow-y-auto bg-base lg:hidden">
           <div className="flex items-center justify-between border-b border-edge px-4 py-3">
             <img
-              src={`${import.meta.env.VITE_BASE_PATH || '/'}logo.webp`}
+              src={logoUrl}
               alt="SSF2X México"
               width={334}
               height={224}
@@ -152,7 +154,7 @@ export function PublicLayout() {
               <NavLink
                 key={item.to}
                 to={item.to}
-                end={item.to === routes.home}
+               
                 onClick={() => setMenuOpen(false)}
                 className={({ isActive }) =>
                   [
@@ -205,7 +207,7 @@ export function PublicLayout() {
           <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <img
-                src={`${import.meta.env.VITE_BASE_PATH || '/'}logo.webp`}
+                src={logoUrl}
                 alt="SSF2X México"
                 width={334}
                 height={224}

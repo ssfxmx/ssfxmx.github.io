@@ -18,6 +18,7 @@ import {
   TutorialsListPage,
 } from '@/modules/tutorials/pages/TutorialsPages';
 import { HighlightsPage } from '@/modules/highlights/pages/HighlightsPage';
+import { StatsPage } from '@/modules/stats/pages/StatsPage';
 import {
   AuthCallbackPage,
   LoginPage,
@@ -84,6 +85,8 @@ export const router = createBrowserRouter(
 
         { path: routes.results, element: <ResultsListPage /> },
         { path: '/resultados/:slug', element: <ResultDetailPage /> },
+
+        { path: routes.stats, element: <StatsPage /> },
 
         { path: routes.players, element: <PlayersListPage /> },
         { path: '/jugadores/:nickname', element: <PlayerProfilePage /> },

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { listCharacters, listPublicSettings } from '@/shared/lib/catalog.service';
+import { storagePublicUrl } from '@/shared/lib/supabase';
 import { queryKeys } from '@/shared/lib/queryClient';
 
 /** Retrasa un valor: evita disparar una consulta con cada tecla en un buscador. */
@@ -40,6 +41,21 @@ export function useSetting<T>(key: string, fallback: T): T {
   const { data } = useSettings();
   const value = data?.[key];
   return (value as T) ?? fallback;
+}
+
+/**
+ * URL del logotipo.
+ *
+ * Si hay uno subido desde el panel, se usa ese. Si no, el que viene con el
+ * proyecto en /logo.webp. Así cambiar la imagen es subir un archivo, no
+ * desplegar el sitio, y nunca queda un hueco si algo falla.
+ */
+export function useLogoUrl(): string {
+  const path = useSetting<string>('site.logo_path', '');
+  const fallback = `${import.meta.env.VITE_BASE_PATH || '/'}logo.webp`;
+
+  if (!path) return fallback;
+  return storagePublicUrl('media', path) ?? fallback;
 }
 
 /** Lleva la página al inicio al cambiar de ruta. */

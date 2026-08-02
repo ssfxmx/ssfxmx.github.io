@@ -17,6 +17,8 @@ export const routes = {
   results: '/resultados',
   resultDetail: (slug: string) => `/resultados/${slug}`,
 
+  stats: '/estadisticas',
+
   players: '/jugadores',
   playerDetail: (nickname: string) => `/jugadores/${encodeURIComponent(nickname)}`,
 
@@ -70,10 +72,10 @@ export const routes = {
  * ningún archivo y se leen igual de rápido.
  */
 export const MAIN_NAV = [
-  { label: 'Inicio', emoji: '🕹️', to: routes.home },
   { label: 'Noticias', emoji: '📰', to: routes.news },
   { label: 'Eventos', emoji: '📅', to: routes.events },
   { label: 'Resultados', emoji: '🏆', to: routes.results },
+  { label: 'Ranking', emoji: '📊', to: routes.stats },
   { label: 'Highlights', emoji: '🎬', to: routes.highlights },
   { label: 'Jugadores', emoji: '👥', to: routes.players },
   { label: 'Tutoriales', emoji: '📖', to: routes.tutorials },

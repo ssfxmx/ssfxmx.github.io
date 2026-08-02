@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Trophy, Users } from 'lucide-react';
 import { routes } from '@/shared/constants/routes';
 import { formatDate } from '@/shared/utils/date';
-import { useSetting } from '@/shared/hooks';
+import { useLogoUrl, useSetting } from '@/shared/hooks';
 import { PageMeta } from '@/shared/components/seo/PageMeta';
 import {
   ArcadePanel,
@@ -27,6 +27,7 @@ import { NewsCard } from './NewsPages';
  */
 export function HomePage() {
   const { isAuthenticated } = useSession();
+  const logoUrl = useLogoUrl();
   const nextEvent = useNextEvent();
   const news = useFeaturedNews(3);
   const results = useRecentResults(4);
@@ -53,11 +54,14 @@ export function HomePage() {
           GRAND MASTER CHALLENGE
         </p>
 
-        <h1 className="mt-5 font-display text-2xl leading-relaxed text-primary neon-text sm:text-4xl">
-          SSF2X
-          <br />
-          MÉXICO
-        </h1>
+        <img
+          src={logoUrl}
+          alt="SSF2X México"
+          width={334}
+          height={224}
+          className="mx-auto mt-6 h-32 w-auto sm:h-44"
+        />
+        <h1 className="sr-only">SSF2X México</h1>
 
         <div className="mx-auto mt-6 max-w-xs">
           <EnergyBar value={100} />

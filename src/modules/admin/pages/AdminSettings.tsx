@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { friendlyError } from '@/shared/lib/supabase';
+import { Upload } from 'lucide-react';
+import { friendlyError, storagePublicUrl, supabase } from '@/shared/lib/supabase';
+import { prepareLogoFile } from '@/shared/utils/avatar';
 import { listAllSettings, updateSetting } from '@/shared/lib/catalog.service';
 import {
   Alert,
@@ -104,6 +106,101 @@ const GROUPS: Array<{ title: string; description: string; fields: FieldSpec[] }>
   },
 ];
 
+/**
+ * Cambio de logotipo.
+ *
+ * La imagen se reduce a 448 píxeles de alto y se convierte a WebP en el
+ * navegador antes de subirla. Un logotipo de 2,7 MB descargándose en cada
+ * visita solo para pintar la cabecera es de las cosas que más pesan en móvil, y
+ * quien administra no tiene por qué acordarse de optimizarlo a mano.
+ *
+ * Si se quita, el sitio vuelve al logotipo que viene con el proyecto. Nunca
+ * queda un hueco.
+ */
+function LogoSetting({
+  currentPath,
+  onChange,
+}: {
+  currentPath: string;
+  onChange: (path: string) => void;
+}) {
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState('');
+
+  const uploaded = storagePublicUrl('media', currentPath || null);
+  const preview = uploaded ?? `${import.meta.env.VITE_BASE_PATH || '/'}logo.webp`;
+
+  async function handleFile(file: File | null) {
+    if (!file) return;
+    setError('');
+    setUploading(true);
+
+    try {
+      const blob = await prepareLogoFile(file);
+      const path = `branding/logo-${Date.now()}.webp`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('media')
+        .upload(path, blob, { contentType: 'image/webp', upsert: true });
+
+      if (uploadError) throw uploadError;
+      onChange(path);
+    } catch (err) {
+      setError(friendlyError(err));
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  return (
+    <ArcadePanel beveled={false} className="p-6">
+      <h2 className="font-display text-[10px] uppercase tracking-wide text-primary">
+        Logotipo
+      </h2>
+      <p className="mb-5 mt-2 text-xs text-ink-dim">
+        Se ve en la cabecera, la portada y el pie. Se optimiza solo al subirlo.
+      </p>
+
+      <div className="flex flex-wrap items-center gap-5">
+        <div className="rounded border border-edge bg-base p-3">
+          <img src={preview} alt="Logotipo actual" className="h-20 w-auto" />
+        </div>
+
+        <div className="space-y-2">
+          <label className="inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded border border-edge bg-surface-raised px-4 py-2 text-sm transition-colors hover:border-steel hover:text-steel">
+            <Upload size={15} />
+            {uploading ? 'Subiendo…' : uploaded ? 'Cambiar logotipo' : 'Subir logotipo'}
+            <input
+              type="file"
+              accept="image/png,image/jpeg,image/webp,image/svg+xml"
+              className="hidden"
+              disabled={uploading}
+              onChange={(e) => handleFile(e.target.files?.[0] ?? null)}
+            />
+          </label>
+
+          {uploaded && (
+            <button
+              type="button"
+              onClick={() => onChange('')}
+              className="block text-xs text-danger hover:underline"
+            >
+              Volver al logotipo original
+            </button>
+          )}
+
+          <p className="max-w-xs text-xs text-ink-dim">
+            Usa PNG con fondo transparente. Se guarda a 448 px de alto, que es
+            suficiente para pantallas de alta resolución.
+          </p>
+        </div>
+      </div>
+
+      {error && <p className="mt-3 text-xs text-danger">{error}</p>}
+    </ArcadePanel>
+  );
+}
+
 export function AdminSettingsPage() {
   const queryClient = useQueryClient();
   const { data, isLoading } = useQuery({
@@ -144,6 +241,10 @@ export function AdminSettingsPage() {
       }
     }
 
+    const logo = byKey.get('site.logo_path');
+    nextValues['site.logo_path'] =
+      typeof logo?.value === 'string' ? logo.value : '';
+
     setValues(nextValues);
     setSwitches(nextSwitches);
   }, [data]);
@@ -171,6 +272,9 @@ export function AdminSettingsPage() {
         }
       }
 
+      // El logotipo vive fuera de GROUPS porque tiene su propio componente.
+      await updateSetting('site.logo_path', values['site.logo_path'] ?? '');
+
       for (const [key, value] of Object.entries(objects)) {
         await updateSetting(key, value);
       }
@@ -189,7 +293,10 @@ export function AdminSettingsPage() {
 
   if (isLoading) return <Spinner />;
 
-  const known = new Set(GROUPS.flatMap((g) => g.fields.map((f) => f.key)));
+  const known = new Set([
+    ...GROUPS.flatMap((g) => g.fields.map((f) => f.key)),
+    'site.logo_path',
+  ]);
   const extras = (data ?? []).filter((setting) => !known.has(setting.key));
 
   return (
@@ -203,6 +310,11 @@ export function AdminSettingsPage() {
       {error && <Alert tone="danger">{error}</Alert>}
 
       <div className="mt-5 max-w-2xl space-y-6">
+        <LogoSetting
+          currentPath={values['site.logo_path'] ?? ''}
+          onChange={(path) => setValues((prev) => ({ ...prev, 'site.logo_path': path }))}
+        />
+
         {GROUPS.map((group) => (
           <ArcadePanel key={group.title} beveled={false} className="p-6">
             <h2 className="font-display text-[10px] uppercase tracking-wide text-primary">
