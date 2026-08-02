@@ -207,6 +207,29 @@ export function detectLink(rawUrl: string): DetectedLink {
 }
 
 /**
+ * Miniatura de un clip.
+ *
+ * YouTube las sirve a partir del identificador, sin API ni credenciales. El
+ * resto de plataformas exigirían su API, así que se usa la que se haya subido a
+ * mano y, si no hay, se devuelve null para que la interfaz dibuje un marcador.
+ *
+ * Importa más de lo que parece: mostrar imágenes en lugar de reproductores es
+ * lo que permite que una galería de treinta clips cargue rápido. Un iframe pesa
+ * cientos de kilobytes; una miniatura, unos pocos.
+ */
+export function thumbnailFor(
+  platform: Platform,
+  embedId: string | null,
+  stored?: string | null
+): string | null {
+  if (stored) return stored;
+  if (platform === 'youtube' && embedId) {
+    return `https://img.youtube.com/vi/${embedId}/hqdefault.jpg`;
+  }
+  return null;
+}
+
+/**
  * URL del reproductor incrustado.
  *
  * Twitch exige el parámetro `parent` con el dominio desde el que se muestra, y
