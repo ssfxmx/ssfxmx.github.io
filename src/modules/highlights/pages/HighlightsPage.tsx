@@ -65,7 +65,7 @@ export function HighlightsPage() {
               'rounded border px-3 py-1.5 text-xs transition-colors',
               platform === 'all'
                 ? 'border-primary bg-primary/15 text-primary'
-                : 'border-edge text-ink-soft hover:border-cyan hover:text-cyan',
+                : 'border-edge text-ink-soft hover:border-steel hover:text-steel',
             ].join(' ')}
           >
             Todos
@@ -78,7 +78,7 @@ export function HighlightsPage() {
                 'rounded border px-3 py-1.5 text-xs transition-colors',
                 platform === item
                   ? 'border-primary bg-primary/15 text-primary'
-                  : 'border-edge text-ink-soft hover:border-cyan hover:text-cyan',
+                  : 'border-edge text-ink-soft hover:border-steel hover:text-steel',
               ].join(' ')}
             >
               {PLATFORM_LABELS[item]}
@@ -104,7 +104,7 @@ export function HighlightsPage() {
                 {featured.event_slug && featured.event_name && (
                   <Link
                     to={routes.eventDetail(featured.event_slug)}
-                    className="text-xs text-cyan hover:text-primary"
+                    className="text-xs text-steel hover:text-primary"
                   >
                     {featured.event_name}
                   </Link>

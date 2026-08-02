@@ -73,7 +73,7 @@ function CharacterTile({
           </p>
 
           <div className="mt-2 flex flex-wrap items-center gap-2">
-            <label className="inline-flex cursor-pointer items-center gap-1.5 rounded border border-edge bg-surface-raised px-2.5 py-1.5 text-xs transition-colors hover:border-cyan hover:text-cyan">
+            <label className="inline-flex cursor-pointer items-center gap-1.5 rounded border border-edge bg-surface-raised px-2.5 py-1.5 text-xs transition-colors hover:border-steel hover:text-steel">
               <Upload size={12} />
               {uploading ? 'Subiendo…' : character.icon_path ? 'Cambiar' : 'Subir'}
               <input

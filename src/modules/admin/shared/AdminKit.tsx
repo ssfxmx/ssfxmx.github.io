@@ -195,7 +195,7 @@ export function TableActions({ children }: { children: ReactNode }) {
 
 export function EditLink({ to }: { to: string }) {
   return (
-    <Link to={to} className="text-xs text-cyan hover:text-primary">
+    <Link to={to} className="text-xs text-steel hover:text-primary">
       Editar
     </Link>
   );
@@ -268,7 +268,7 @@ export function CoverUpload({
           </div>
         )}
 
-        <label className="inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded border border-edge bg-surface-raised px-4 py-2 text-sm hover:border-cyan hover:text-cyan">
+        <label className="inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded border border-edge bg-surface-raised px-4 py-2 text-sm hover:border-steel hover:text-steel">
           {uploading ? 'Subiendo…' : preview ? 'Cambiar imagen' : 'Subir imagen'}
           <input
             type="file"

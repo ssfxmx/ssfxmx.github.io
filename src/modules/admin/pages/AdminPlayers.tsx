@@ -309,7 +309,7 @@ export function AdminPlayersList() {
           <TableActions>
             <button
               onClick={() => setEditing(row)}
-              className="text-xs text-cyan hover:underline"
+              className="text-xs text-steel hover:underline"
             >
               Editar
             </button>

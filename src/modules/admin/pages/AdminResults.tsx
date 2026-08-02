@@ -42,7 +42,7 @@ export function AdminResultsList() {
             No hay torneos finalizados. Solo se pueden registrar resultados en eventos con
             estado <strong className="text-primary">Finalizado</strong>.
           </p>
-          <Link to={routes.adminEvents} className="mt-4 inline-block text-sm text-cyan hover:text-primary">
+          <Link to={routes.adminEvents} className="mt-4 inline-block text-sm text-steel hover:text-primary">
             Ir a eventos →
           </Link>
         </ArcadePanel>
@@ -59,7 +59,7 @@ export function AdminResultsList() {
                 <p className="truncate font-medium text-ink">{event.name}</p>
                 <p className="text-xs text-ink-dim">{formatDate(event.starts_at)}</p>
               </div>
-              <span className="shrink-0 text-sm text-cyan">Capturar →</span>
+              <span className="shrink-0 text-sm text-steel">Capturar →</span>
             </ArcadePanel>
           </Link>
         ))}
@@ -255,7 +255,7 @@ export function AdminResultsForm() {
                 <Field label="Jugador">
                   {row.playerId ? (
                     <div className="flex items-center gap-2">
-                      <span className="flex-1 rounded border border-cyan/40 bg-cyan/10 px-3 py-2.5 text-sm text-cyan">
+                      <span className="flex-1 rounded border border-steel/40 bg-steel/10 px-3 py-2.5 text-sm text-steel">
                         {selectedName ?? 'Jugador registrado'}
                       </span>
                       <Button

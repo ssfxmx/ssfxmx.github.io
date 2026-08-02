@@ -135,7 +135,7 @@ export function CalendarPage() {
       <div className="space-y-10">
         {grouped.map(([key, events]) => (
           <section key={key}>
-            <h3 className="mb-4 font-display text-xs text-cyan">
+            <h3 className="mb-4 font-display text-xs text-steel">
               {monthLabel(events[0]!.starts_at).toUpperCase()}
             </h3>
             <div className="space-y-3">
@@ -208,7 +208,7 @@ export function EventDetailPage() {
         <div className="flex flex-wrap items-center gap-2">
           <EventStatusBadge status={data.status} />
           <Badge>{KIND_LABELS[data.kind] ?? data.kind}</Badge>
-          <Badge tone="cyan">{MODE_LABELS[data.mode] ?? data.mode}</Badge>
+          <Badge tone="steel">{MODE_LABELS[data.mode] ?? data.mode}</Badge>
         </div>
 
         <h1 className="font-display text-xl leading-relaxed text-primary neon-text sm:text-2xl">
@@ -290,7 +290,7 @@ export function EventDetailPage() {
                 href={data.stream_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex min-h-[44px] items-center gap-2 rounded border border-edge bg-surface-raised px-4 py-2.5 text-sm hover:border-cyan hover:text-cyan"
+                className="inline-flex min-h-[44px] items-center gap-2 rounded border border-edge bg-surface-raised px-4 py-2.5 text-sm hover:border-steel hover:text-steel"
               >
                 Ver transmisión <ExternalLink size={14} />
               </a>

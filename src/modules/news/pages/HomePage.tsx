@@ -49,7 +49,7 @@ export function HomePage() {
 
       {/* Héroe */}
       <section className="mb-14 text-center">
-        <p className="font-display text-[10px] tracking-[0.4em] text-cyan">
+        <p className="font-display text-[10px] tracking-[0.4em] text-steel">
           GRAND MASTER CHALLENGE
         </p>
 
@@ -101,7 +101,7 @@ export function HomePage() {
             action={
               <Link
                 to={routes.news}
-                className="inline-flex items-center gap-1 text-sm text-cyan hover:text-primary"
+                className="inline-flex items-center gap-1 text-sm text-steel hover:text-primary"
               >
                 Ver todas <ArrowRight size={14} />
               </Link>
@@ -125,7 +125,7 @@ export function HomePage() {
             action={
               <Link
                 to={routes.results}
-                className="inline-flex items-center gap-1 text-sm text-cyan hover:text-primary"
+                className="inline-flex items-center gap-1 text-sm text-steel hover:text-primary"
               >
                 Ver histórico <ArrowRight size={14} />
               </Link>

@@ -87,7 +87,7 @@ export function ResultsTable({ results }: { results: EventResultPublic[] }) {
               </div>
 
               {result.character_name && (
-                <Badge tone="cyan">{result.character_name}</Badge>
+                <Badge tone="steel">{result.character_name}</Badge>
               )}
             </li>
           );

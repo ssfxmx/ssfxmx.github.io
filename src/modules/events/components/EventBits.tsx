@@ -10,10 +10,10 @@ import type { EventRecord, EventStatus } from '@/shared/types/database';
 
 const STATUS_CONFIG: Record<
   EventStatus,
-  { label: string; tone: 'neutral' | 'primary' | 'cyan' | 'magenta' | 'success' | 'danger'; pulse?: boolean }
+  { label: string; tone: 'neutral' | 'primary' | 'steel' | 'magenta' | 'success' | 'danger'; pulse?: boolean }
 > = {
   draft: { label: 'Borrador', tone: 'neutral' },
-  scheduled: { label: 'Programado', tone: 'cyan' },
+  scheduled: { label: 'Programado', tone: 'steel' },
   open: { label: 'Inscripciones abiertas', tone: 'primary' },
   live: { label: 'EN VIVO', tone: 'magenta', pulse: true },
   finished: { label: 'Finalizado', tone: 'neutral' },

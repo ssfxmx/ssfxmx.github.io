@@ -88,7 +88,7 @@ const VARIANTS: Record<Variant, string> = {
   primary:
     'bg-primary text-base font-semibold hover:bg-primary/85 hover:shadow-neon active:translate-y-px',
   secondary:
-    'bg-surface-raised text-ink border border-edge hover:border-cyan hover:text-cyan',
+    'bg-surface-raised text-ink border border-edge hover:border-steel hover:text-steel',
   ghost: 'text-ink-soft hover:text-primary hover:bg-surface',
   danger: 'bg-danger text-white font-semibold hover:bg-danger/85',
 };
@@ -157,7 +157,7 @@ export function LinkButton({
 
 const FIELD_BASE =
   'w-full rounded border bg-base px-3 py-2.5 text-ink placeholder:text-ink-dim ' +
-  'transition-colors focus:border-cyan focus:outline-none min-h-[44px]';
+  'transition-colors focus:border-steel focus:outline-none min-h-[44px]';
 
 function fieldClass(error?: string) {
   return cx(FIELD_BASE, error ? 'border-danger' : 'border-edge');
@@ -225,13 +225,21 @@ export const Select = forwardRef<
 /* Indicadores                                                                 */
 /* ========================================================================== */
 
-type BadgeTone = 'neutral' | 'primary' | 'cyan' | 'magenta' | 'success' | 'danger';
+type BadgeTone =
+  | 'neutral'
+  | 'primary'
+  | 'steel'
+  | 'magenta'
+  | 'orange'
+  | 'success'
+  | 'danger';
 
 const TONES: Record<BadgeTone, string> = {
   neutral: 'bg-surface-raised text-ink-soft border-edge',
   primary: 'bg-primary/15 text-primary border-primary/40',
-  cyan: 'bg-cyan/15 text-cyan border-cyan/40',
+  steel: 'bg-steel/15 text-steel border-steel/40',
   magenta: 'bg-magenta/15 text-magenta border-magenta/40',
+  orange: 'bg-orange/15 text-orange border-orange/40',
   success: 'bg-success/15 text-success border-success/40',
   danger: 'bg-danger/15 text-danger border-danger/40',
 };
@@ -259,13 +267,13 @@ export function Badge({
 }
 
 /** Barra de energía: separador y a la vez indicador de progreso. */
-export function EnergyBar({ value = 100, tone = 'primary' }: { value?: number; tone?: 'primary' | 'cyan' }) {
+export function EnergyBar({ value = 100, tone = 'primary' }: { value?: number; tone?: 'primary' | 'steel' }) {
   return (
     <div className="h-1.5 w-full overflow-hidden rounded-sm bg-surface-raised">
       <div
         className={cx(
           'h-full transition-all duration-500',
-          tone === 'primary' ? 'bg-gradient-to-r from-primary to-magenta' : 'bg-cyan'
+          tone === 'primary' ? 'bg-gradient-to-r from-primary to-magenta' : 'bg-steel'
         )}
         style={{ width: `${Math.max(0, Math.min(100, value))}%` }}
       />
@@ -331,14 +339,14 @@ export function Alert({
   tone = 'primary',
   children,
 }: {
-  tone?: 'primary' | 'success' | 'danger' | 'cyan';
+  tone?: 'primary' | 'success' | 'danger' | 'steel';
   children: ReactNode;
 }) {
   const tones = {
     primary: 'border-primary/40 bg-primary/10 text-primary',
     success: 'border-success/40 bg-success/10 text-success',
     danger: 'border-danger/40 bg-danger/10 text-danger',
-    cyan: 'border-cyan/40 bg-cyan/10 text-cyan',
+    steel: 'border-steel/40 bg-steel/10 text-steel',
   };
   return (
     <div className={cx('rounded border px-4 py-3 text-sm', tones[tone])} role="alert">

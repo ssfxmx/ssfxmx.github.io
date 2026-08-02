@@ -102,7 +102,7 @@ export function PublicLayout() {
           </button>
         </div>
 
-        <div className="h-0.5 bg-gradient-to-r from-primary via-magenta to-cyan" />
+        <div className="h-0.5 bg-gradient-to-r from-primary via-magenta to-steel" />
       </header>
 
       {/* Menú móvil

@@ -123,7 +123,7 @@ export function AdminLayout() {
             Ver sitio →
           </Link>
         </div>
-        <div className="h-0.5 bg-gradient-to-r from-primary via-magenta to-cyan" />
+        <div className="h-0.5 bg-gradient-to-r from-primary via-magenta to-steel" />
       </header>
 
       <div className="mx-auto flex w-full max-w-7xl flex-1 gap-8 px-4 py-6">

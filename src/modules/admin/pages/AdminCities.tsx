@@ -126,7 +126,7 @@ export function AdminCitiesPage() {
       render: (row) => (
         <button
           onClick={() => toggle.mutate({ id: row.id, isActive: !row.is_active })}
-          className="text-xs text-cyan hover:underline"
+          className="text-xs text-steel hover:underline"
         >
           {row.is_active ? 'Ocultar' : 'Mostrar'}
         </button>

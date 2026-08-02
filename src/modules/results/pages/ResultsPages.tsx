@@ -83,7 +83,7 @@ export function ResultsListPage() {
               </div>
               <Link
                 to={routes.eventDetail(tournament.slug)}
-                className="text-xs text-cyan hover:text-primary"
+                className="text-xs text-steel hover:text-primary"
               >
                 Ver evento →
               </Link>
@@ -153,7 +153,7 @@ export function ResultDetailPage() {
 
       <Link
         to={routes.eventDetail(first.event_slug)}
-        className="mt-6 inline-block text-sm text-cyan hover:text-primary"
+        className="mt-6 inline-block text-sm text-steel hover:text-primary"
       >
         Ver información del evento →
       </Link>

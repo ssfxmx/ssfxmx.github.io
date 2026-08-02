@@ -1,34 +1,55 @@
 /**
  * Tokens del sistema de diseño.
  *
- * Único lugar donde viven los colores. Se declaran como canales RGB sueltos
- * (sin la función rgb()) para que Tailwind pueda aplicarles opacidad con la
- * sintaxis bg-primary/20.
+ * PALETA
+ * Tomada del logotipo del juego: amarillo, magenta, naranja y el azul acero del
+ * degradado, sobre el navy profundo del contorno. Los colores no son
+ * apropiables —una paleta no se registra, a diferencia de un logotipo—, así que
+ * esto captura la identidad visual sin reproducir nada protegido.
  *
- * Paleta: sala de máquinas de noche. Fondo casi negro con un tinte azulado,
- * ámbar de gabinete como color principal, cian y magenta como acentos de
- * letrero de neón. El neón puro sobre negro cansa la vista, así que se usa
- * como acento y nunca como color de párrafo.
+ * Se declaran como canales RGB sueltos (sin la función rgb()) para que Tailwind
+ * pueda aplicarles opacidad con la sintaxis bg-primary/20.
+ *
+ * CONTRASTE
+ * Cada color de texto se verificó contra el fondo base antes de fijarlo:
+ *
+ *   Texto principal    17.5:1  AAA
+ *   Texto secundario    8.3:1  AAA
+ *   Texto tenue         5.0:1  AA
+ *   Amarillo (primary) 12.1:1  AAA
+ *   Magenta             6.3:1  AA
+ *   Naranja             6.2:1  AA
+ *   Azul acero         11.0:1  AAA
+ *
+ * El magenta del logotipo en su tono puro (#EC1E79) se queda en 4.67:1: pasa,
+ * pero justo. Por eso el token de texto usa una versión aclarada y el tono puro
+ * queda para rellenos y bordes, donde el contraste no es un requisito.
  */
 
 :root {
-  /* Superficies */
-  --color-base: 11 11 18;
-  --color-surface: 20 20 31;
-  --color-surface-raised: 30 30 45;
-  --color-edge: 46 46 69;
+  /* Superficies — navy profundo, no negro puro */
+  --color-base: 11 11 26;
+  --color-surface: 20 20 42;
+  --color-surface-raised: 30 30 60;
 
-  /* Acentos */
-  --color-primary: 255 176 0;
-  --color-cyan: 0 229 255;
-  --color-magenta: 255 46 136;
+  /* Borde: el navy del contorno del logotipo. Es lo que más amarra la
+     identidad visual sin usar ninguna forma protegida. */
+  --color-edge: 46 46 107;
+
+  /* Acentos del logotipo */
+  --color-primary: 245 198 63; /* amarillo */
+  --color-magenta: 255 77 157; /* rosa, aclarado para cumplir contraste */
+  --color-magenta-deep: 236 30 121; /* rosa puro: rellenos y bordes */
+  --color-orange: 242 101 34; /* el naranja de TURBO */
+  --color-steel: 168 196 240; /* azul del degradado de SUPER */
+
   --color-success: 61 220 132;
   --color-danger: 255 71 87;
 
-  /* Texto — contraste verificado AA (4.5:1) sobre --color-base */
+  /* Texto — con un matiz azulado que armoniza con el fondo navy */
   --color-ink: 242 242 247;
-  --color-ink-soft: 160 160 184;
-  --color-ink-dim: 122 122 146;
+  --color-ink-soft: 165 168 196;
+  --color-ink-dim: 124 127 158;
 
   /* Intensidad de las scanlines. Se pone a 0 con prefers-reduced-motion. */
   --scanline-opacity: 0.025;

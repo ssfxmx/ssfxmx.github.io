@@ -21,8 +21,10 @@ export default {
         edge: 'rgb(var(--color-edge) / <alpha-value>)',
 
         primary: 'rgb(var(--color-primary) / <alpha-value>)',
-        cyan: 'rgb(var(--color-cyan) / <alpha-value>)',
+        steel: 'rgb(var(--color-steel) / <alpha-value>)',
         magenta: 'rgb(var(--color-magenta) / <alpha-value>)',
+        'magenta-deep': 'rgb(var(--color-magenta-deep) / <alpha-value>)',
+        orange: 'rgb(var(--color-orange) / <alpha-value>)',
         success: 'rgb(var(--color-success) / <alpha-value>)',
         danger: 'rgb(var(--color-danger) / <alpha-value>)',
 
@@ -38,7 +40,7 @@ export default {
       },
       boxShadow: {
         neon: '0 0 12px rgb(var(--color-primary) / 0.35)',
-        'neon-cyan': '0 0 12px rgb(var(--color-cyan) / 0.35)',
+        'neon-steel': '0 0 12px rgb(var(--color-steel) / 0.35)',
         panel: '0 2px 0 0 rgb(var(--color-edge)), 0 8px 24px rgb(0 0 0 / 0.4)',
       },
       keyframes: {

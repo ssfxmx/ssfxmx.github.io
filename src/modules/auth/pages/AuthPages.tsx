@@ -109,7 +109,7 @@ export function LoginPage() {
             <Link to={routes.recover} className="text-ink-soft hover:text-primary">
               Olvidé mi contraseña
             </Link>
-            <Link to={routes.register} className="text-cyan hover:text-primary">
+            <Link to={routes.register} className="text-steel hover:text-primary">
               Crear cuenta
             </Link>
           </div>
@@ -222,7 +222,7 @@ export function RegisterPage() {
               Abre el enlace del correo para activar tu cuenta. Si no lo ves en unos
               minutos, revisa la carpeta de spam.
             </p>
-            <Link to={routes.login} className="inline-block text-cyan hover:text-primary">
+            <Link to={routes.login} className="inline-block text-steel hover:text-primary">
               Ir a iniciar sesión →
             </Link>
           </div>
@@ -343,7 +343,7 @@ export function RegisterPage() {
 
           <p className="pt-2 text-center text-sm text-ink-soft">
             ¿Ya tienes cuenta?{' '}
-            <Link to={routes.login} className="text-cyan hover:text-primary">
+            <Link to={routes.login} className="text-steel hover:text-primary">
               Entrar
             </Link>
           </p>

@@ -87,7 +87,7 @@ export function TutorialsListPage() {
             <div className="mb-4 flex items-center gap-3">
               <GraduationCap size={18} className="text-primary" />
               <div>
-                <h3 className="font-display text-xs text-cyan">
+                <h3 className="font-display text-xs text-steel">
                   {category.name.toUpperCase()}
                 </h3>
                 {category.description && (
@@ -106,7 +106,7 @@ export function TutorialsListPage() {
 
         {uncategorized.length > 0 && (
           <section>
-            <h3 className="mb-4 font-display text-xs text-cyan">OTRAS GUÍAS</h3>
+            <h3 className="mb-4 font-display text-xs text-steel">OTRAS GUÍAS</h3>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {uncategorized.map((tutorial) => (
                 <TutorialCard key={tutorial.id} tutorial={tutorial} />
@@ -200,7 +200,7 @@ export function TutorialDetailPage() {
 
       <header className="mb-10">
         {category && (
-          <p className="mb-4 font-display text-[10px] uppercase tracking-[0.2em] text-cyan">
+          <p className="mb-4 font-display text-[10px] uppercase tracking-[0.2em] text-steel">
             {category.name}
           </p>
         )}
@@ -240,7 +240,7 @@ export function TutorialDetailPage() {
         </p>
         <Link
           to={routes.tutorials}
-          className="mt-4 inline-flex items-center gap-2 text-sm text-cyan hover:text-primary"
+          className="mt-4 inline-flex items-center gap-2 text-sm text-steel hover:text-primary"
         >
           <ArrowLeft size={15} /> Ver todas las guías
         </Link>

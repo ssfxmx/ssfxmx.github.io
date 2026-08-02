@@ -52,13 +52,16 @@ export const PLATFORM_LABELS: Record<Platform, string> = {
 };
 
 /** Color de acento por plataforma, para las tarjetas. */
-export const PLATFORM_TONES: Record<Platform, 'primary' | 'cyan' | 'magenta' | 'neutral'> = {
+export const PLATFORM_TONES: Record<
+  Platform,
+  'primary' | 'steel' | 'magenta' | 'orange' | 'neutral'
+> = {
   youtube: 'magenta',
   twitch: 'magenta',
   x: 'neutral',
-  facebook: 'cyan',
-  tiktok: 'cyan',
-  instagram: 'magenta',
+  facebook: 'steel',
+  tiktok: 'steel',
+  instagram: 'orange',
   kick: 'primary',
   other: 'neutral',
 };

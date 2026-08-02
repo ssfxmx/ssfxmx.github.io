@@ -77,7 +77,7 @@ export function AdminDashboard() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <section>
-          <h2 className="mb-3 font-display text-[10px] uppercase text-cyan">
+          <h2 className="mb-3 font-display text-[10px] uppercase text-steel">
             Próximos eventos
           </h2>
           <ArcadePanel beveled={false} className="divide-y divide-edge">
@@ -94,14 +94,14 @@ export function AdminDashboard() {
                   <p className="truncate text-sm text-ink">{event.name}</p>
                   <p className="text-xs text-ink-dim">{formatDate(event.starts_at)}</p>
                 </div>
-                <Badge tone="cyan">{event.status}</Badge>
+                <Badge tone="steel">{event.status}</Badge>
               </Link>
             ))}
           </ArcadePanel>
         </section>
 
         <section>
-          <h2 className="mb-3 font-display text-[10px] uppercase text-cyan">
+          <h2 className="mb-3 font-display text-[10px] uppercase text-steel">
             Torneos terminados
           </h2>
           <ArcadePanel beveled={false} className="divide-y divide-edge">
@@ -118,7 +118,7 @@ export function AdminDashboard() {
                   <p className="truncate text-sm text-ink">{event.name}</p>
                   <p className="text-xs text-ink-dim">{formatDate(event.starts_at)}</p>
                 </div>
-                <span className="shrink-0 text-xs text-cyan">Capturar →</span>
+                <span className="shrink-0 text-xs text-steel">Capturar →</span>
               </Link>
             ))}
           </ArcadePanel>
@@ -144,7 +144,7 @@ export function ComingSoonPage({
       <ArcadePanel className="p-10 text-center">
         <p className="animate-blink font-display text-xs text-primary">EN CONSTRUCCIÓN</p>
         <p className="mx-auto mt-4 max-w-md text-sm text-ink-soft">
-          Este módulo llega en la <strong className="text-cyan">{phase}</strong>. La ruta,
+          Este módulo llega en la <strong className="text-steel">{phase}</strong>. La ruta,
           los permisos y las tablas de la base de datos ya existen: completarlo será
           rellenar la pantalla, no rediseñar el panel.
         </p>

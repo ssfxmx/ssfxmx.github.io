@@ -22,7 +22,7 @@ export function OverlayPage() {
       <div className="rounded border border-primary/40 bg-black/70 px-8 py-6 text-center backdrop-blur">
         <p className="font-display text-xs text-primary">SSF2X MÉXICO</p>
         <p className="mt-3 text-sm text-white/70">
-          Overlay <code className="text-cyan">{key}</code> disponible en la Fase 3.
+          Overlay <code className="text-steel">{key}</code> disponible en la Fase 3.
         </p>
       </div>
     </div>

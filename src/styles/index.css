@@ -34,7 +34,7 @@
 
   /* Foco visible siempre: navegar con teclado no debería ser adivinar. */
   :focus-visible {
-    @apply outline-none ring-2 ring-cyan ring-offset-2 ring-offset-base;
+    @apply outline-none ring-2 ring-steel ring-offset-2 ring-offset-base;
   }
 
   ::selection {
@@ -135,7 +135,7 @@
   }
 
   .prose-arcade h3 {
-    @apply text-cyan font-semibold mt-10 mb-3;
+    @apply text-steel font-semibold mt-10 mb-3;
     font-size: 18px;
   }
 
@@ -150,7 +150,7 @@
   }
 
   .prose-arcade a {
-    @apply text-cyan underline underline-offset-4 decoration-cyan/40
+    @apply text-steel underline underline-offset-4 decoration-steel/40
            hover:text-primary hover:decoration-primary transition-colors;
   }
 
@@ -206,7 +206,7 @@
   /* Las citas se convierten en aviso destacado: es como se usan en la
      práctica dentro de un tutorial ("ojo con esto"). */
   .prose-arcade blockquote {
-    @apply my-7 border-l-2 border-cyan bg-cyan/5 px-5 py-4 not-italic text-ink-soft;
+    @apply my-7 border-l-2 border-steel bg-steel/5 px-5 py-4 not-italic text-ink-soft;
   }
   .prose-arcade blockquote p:last-child {
     @apply mb-0;

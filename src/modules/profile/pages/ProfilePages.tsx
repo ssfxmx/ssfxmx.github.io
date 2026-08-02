@@ -85,7 +85,7 @@ export function ProfilePage() {
               {cityName ? `${cityName}, ` : ''}
               {countryName(profile.country_code)}
             </p>
-            {character && <p className="mt-1 text-sm text-cyan">Main: {character.name}</p>}
+            {character && <p className="mt-1 text-sm text-steel">Main: {character.name}</p>}
           </div>
         </div>
       </ArcadePanel>
@@ -279,7 +279,7 @@ export function ProfileEditPage() {
                   Usar personaje
                 </Button>
 
-                <label className="inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded border border-edge bg-surface-raised px-3 py-1.5 text-xs hover:border-cyan hover:text-cyan">
+                <label className="inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded border border-edge bg-surface-raised px-3 py-1.5 text-xs hover:border-steel hover:text-steel">
                   <Upload size={14} /> Subir imagen
                   <input
                     type="file"
@@ -383,7 +383,7 @@ export function ProfileEditPage() {
 
       <p className="mt-6 text-center text-xs text-ink-dim">
         ¿Quieres cambiar tu nickname?{' '}
-        <Link to={routes.home} className="text-cyan hover:text-primary">
+        <Link to={routes.home} className="text-steel hover:text-primary">
           Escríbenos
         </Link>
         , lo hacemos manualmente para evitar suplantaciones.

@@ -46,7 +46,7 @@ function PlayerCard({ player }: { player: PlayerPublic }) {
             </p>
           )}
           {player.character_name && (
-            <span className="mt-1.5 inline-block text-xs text-cyan">
+            <span className="mt-1.5 inline-block text-xs text-steel">
               {player.character_name}
             </span>
           )}
@@ -221,7 +221,7 @@ export function PlayerProfilePage() {
             {player.character_name && (
               <p className="mt-2 text-sm">
                 <span className="text-ink-dim">Main: </span>
-                <span className="text-cyan">{player.character_name}</span>
+                <span className="text-steel">{player.character_name}</span>
               </p>
             )}
 
@@ -270,7 +270,7 @@ export function PlayerProfilePage() {
                     <p className="truncate text-sm font-medium text-ink">{entry.event_name}</p>
                     <p className="text-xs text-ink-dim">{formatDate(entry.event_date)}</p>
                   </div>
-                  {entry.character_name && <Badge tone="cyan">{entry.character_name}</Badge>}
+                  {entry.character_name && <Badge tone="steel">{entry.character_name}</Badge>}
                 </ArcadePanel>
               </Link>
             ))}
