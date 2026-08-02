@@ -34,7 +34,7 @@ const SECTIONS = [
   {
     title: '📡 Stream',
     items: [
-      { to: routes.adminOverlays, label: 'Overlays OBS', emoji: '🖥️', soon: true },
+      { to: routes.adminOverlays, label: 'Overlays OBS', emoji: '🖥️' },
       { to: routes.adminPolls, label: 'Votaciones', emoji: '🗳️', soon: true },
     ],
   },

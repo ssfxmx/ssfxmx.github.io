@@ -50,6 +50,22 @@
     );
   }
 
+  /**
+   * Modo overlay: la página se captura como fuente de navegador en OBS.
+   *
+   * El fondo tiene que ser transparente o taparía la partida entera, y hay que
+   * apagar la rejilla y las scanlines, que se verían encima del juego. Se activa
+   * añadiendo la clase desde el componente del overlay, no por ruta, para que
+   * dependa de lo que se está mostrando y no de la dirección.
+   */
+  body.overlay-mode {
+    background: transparent !important;
+  }
+  body.overlay-mode::before,
+  body.overlay-mode::after {
+    display: none !important;
+  }
+
   /* Foco visible siempre: navegar con teclado no debería ser adivinar. */
   :focus-visible {
     @apply outline-none ring-2 ring-steel ring-offset-2 ring-offset-base;

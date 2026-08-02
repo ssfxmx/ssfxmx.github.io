@@ -37,6 +37,7 @@ import { AdminPlayersList } from '@/modules/admin/pages/AdminPlayers';
 import { AdminCharactersPage } from '@/modules/admin/pages/AdminCharacters';
 import { AdminCitiesPage } from '@/modules/admin/pages/AdminCities';
 import { AdminReportsPage } from '@/modules/admin/pages/AdminReports';
+import { AdminOverlaysPage } from '@/modules/admin/pages/AdminOverlays';
 import {
   AdminTutorialForm,
   AdminTutorialsList,
@@ -160,16 +161,7 @@ export const router = createBrowserRouter(
 
         // Módulos preparados: la ruta, el permiso y el menú ya funcionan.
         { path: routes.adminReports, element: <AdminReportsPage /> },
-        {
-          path: routes.adminOverlays,
-          element: (
-            <ComingSoonPage
-              title="OVERLAYS OBS"
-              description="Generador de overlays para transmisiones."
-              phase="Fase 3"
-            />
-          ),
-        },
+        { path: routes.adminOverlays, element: <AdminOverlaysPage /> },
         {
           path: routes.adminPolls,
           element: (
