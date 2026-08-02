@@ -60,6 +60,7 @@ export function PublicLayout() {
           <nav className="hidden items-center lg:flex">
             {MAIN_NAV.map((item) => (
               <NavLink key={item.to} to={item.to} end={item.to === routes.home} className={navLinkClass}>
+                <span aria-hidden className="mr-1.5">{item.emoji}</span>
                 {item.label}
               </NavLink>
             ))}
@@ -140,6 +141,7 @@ export function PublicLayout() {
                   ].join(' ')
                 }
               >
+                <span aria-hidden className="mr-2 text-base">{item.emoji}</span>
                 {item.label}
               </NavLink>
             ))}
@@ -191,6 +193,7 @@ export function PublicLayout() {
             <nav className="flex flex-col gap-2 text-sm">
               {MAIN_NAV.map((item) => (
                 <Link key={item.to} to={item.to} className="text-ink-dim hover:text-primary">
+                  <span aria-hidden className="mr-1.5">{item.emoji}</span>
                   {item.label}
                 </Link>
               ))}

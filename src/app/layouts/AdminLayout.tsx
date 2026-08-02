@@ -1,22 +1,6 @@
 import { useState } from 'react';
 import { Link, NavLink, Outlet } from 'react-router-dom';
-import {
-  BarChart3,
-  CalendarDays,
-  Clapperboard,
-  GraduationCap,
-  Home,
-  MapPin,
-  Menu,
-  Monitor,
-  Newspaper,
-  Settings,
-  Swords,
-  Trophy,
-  Users,
-  Vote,
-  X,
-} from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { routes } from '@/shared/constants/routes';
 
 /**
@@ -29,36 +13,36 @@ import { routes } from '@/shared/constants/routes';
 
 const SECTIONS = [
   {
-    title: 'Contenido',
+    title: '📝 Contenido',
     items: [
-      { to: routes.admin, label: 'Resumen', icon: Home, end: true },
-      { to: routes.adminNews, label: 'Noticias', icon: Newspaper },
-      { to: routes.adminEvents, label: 'Eventos', icon: CalendarDays },
-      { to: routes.adminResults, label: 'Resultados', icon: Trophy },
-      { to: routes.adminHighlights, label: 'Highlights', icon: Clapperboard },
-      { to: routes.adminTutorials, label: 'Tutoriales', icon: GraduationCap },
+      { to: routes.admin, label: 'Resumen', emoji: '📊', end: true },
+      { to: routes.adminNews, label: 'Noticias', emoji: '📰' },
+      { to: routes.adminEvents, label: 'Eventos', emoji: '📅' },
+      { to: routes.adminResults, label: 'Resultados', emoji: '🏆' },
+      { to: routes.adminHighlights, label: 'Highlights', emoji: '🎬' },
+      { to: routes.adminTutorials, label: 'Tutoriales', emoji: '📖' },
     ],
   },
   {
-    title: 'Comunidad',
+    title: '🎮 Comunidad',
     items: [
-      { to: routes.adminPlayers, label: 'Jugadores', icon: Users },
-      { to: routes.adminCharacters, label: 'Personajes', icon: Swords },
-      { to: routes.adminCities, label: 'Ciudades', icon: MapPin },
+      { to: routes.adminPlayers, label: 'Jugadores', emoji: '👥' },
+      { to: routes.adminCharacters, label: 'Personajes', emoji: '🥋' },
+      { to: routes.adminCities, label: 'Ciudades', emoji: '📍' },
     ],
   },
   {
-    title: 'Stream',
+    title: '📡 Stream',
     items: [
-      { to: routes.adminOverlays, label: 'Overlays OBS', icon: Monitor, soon: true },
-      { to: routes.adminPolls, label: 'Votaciones', icon: Vote, soon: true },
+      { to: routes.adminOverlays, label: 'Overlays OBS', emoji: '🖥️', soon: true },
+      { to: routes.adminPolls, label: 'Votaciones', emoji: '🗳️', soon: true },
     ],
   },
   {
-    title: 'Sistema',
+    title: '🔧 Sistema',
     items: [
-      { to: routes.adminReports, label: 'Reportes', icon: BarChart3, soon: true },
-      { to: routes.adminSettings, label: 'Configuración', icon: Settings },
+      { to: routes.adminReports, label: 'Reportes', emoji: '📈', soon: true },
+      { to: routes.adminSettings, label: 'Configuración', emoji: '⚙️' },
     ],
   },
 ] as const;
@@ -90,7 +74,7 @@ export function AdminLayout() {
                 className={linkClass}
                 onClick={() => setOpen(false)}
               >
-                <item.icon size={16} />
+                <span aria-hidden className="w-5 text-center text-sm">{item.emoji}</span>
                 <span className="flex-1">{item.label}</span>
                 {'soon' in item && item.soon && (
                   <span className="rounded bg-surface-raised px-1.5 py-0.5 text-[9px] text-ink-dim">

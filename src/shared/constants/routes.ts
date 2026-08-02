@@ -61,13 +61,20 @@ export const routes = {
   overlay: (key: string) => `/overlay/${key}`,
 } as const;
 
-/** Navegación principal del sitio público. */
+/**
+ * Navegación principal del sitio público.
+ *
+ * Los emoji son parte de la etiqueta, no un icono aparte. Nota: cada sistema
+ * operativo los dibuja con su propia fuente, así que en Windows, Android e iOS
+ * se ven distintos. Es el precio de usarlos; a cambio, funcionan sin descargar
+ * ningún archivo y se leen igual de rápido.
+ */
 export const MAIN_NAV = [
-  { label: 'Inicio', to: routes.home },
-  { label: 'Noticias', to: routes.news },
-  { label: 'Eventos', to: routes.events },
-  { label: 'Resultados', to: routes.results },
-  { label: 'Highlights', to: routes.highlights },
-  { label: 'Jugadores', to: routes.players },
-  { label: 'Tutoriales', to: routes.tutorials },
+  { label: 'Inicio', emoji: '🕹️', to: routes.home },
+  { label: 'Noticias', emoji: '📰', to: routes.news },
+  { label: 'Eventos', emoji: '📅', to: routes.events },
+  { label: 'Resultados', emoji: '🏆', to: routes.results },
+  { label: 'Highlights', emoji: '🎬', to: routes.highlights },
+  { label: 'Jugadores', emoji: '👥', to: routes.players },
+  { label: 'Tutoriales', emoji: '📖', to: routes.tutorials },
 ] as const;

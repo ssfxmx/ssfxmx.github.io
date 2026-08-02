@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, MapPin, Search, Trophy } from 'lucide-react';
+import { ArrowLeft, MapPin, Search, Trophy, UserPlus } from 'lucide-react';
 import { routes } from '@/shared/constants/routes';
 import { resolveAvatar } from '@/shared/utils/avatar';
 import { countryFlag, countryName, pluralize } from '@/shared/utils/format';
@@ -15,10 +15,12 @@ import {
   ErrorState,
   Field,
   Input,
+  LinkButton,
   SectionTitle,
   Select,
   Spinner,
 } from '@/shared/components/ui';
+import { useSession } from '@/modules/auth/hooks/useSession';
 import { usePlayerHistory } from '@/modules/results/hooks';
 import type { PlayerPublic } from '@/shared/types/database';
 import { CityFilter } from '@/shared/components/ui/CitySelect';
@@ -57,6 +59,7 @@ function PlayerCard({ player }: { player: PlayerPublic }) {
 }
 
 export function PlayersListPage() {
+  const { isAuthenticated } = useSession();
   const [search, setSearch] = useState('');
   const [characterId, setCharacterId] = useState<number | null>(null);
   const [cityId, setCityId] = useState<number | null>(null);
@@ -77,7 +80,36 @@ export function PlayersListPage() {
         description="Directorio de jugadores de la comunidad SSF2X México."
       />
 
-      <SectionTitle>JUGADORES</SectionTitle>
+      <SectionTitle
+        action={
+          !isAuthenticated && (
+            <LinkButton to={routes.register} size="sm">
+              <UserPlus size={15} /> Únete a la comunidad
+            </LinkButton>
+          )
+        }
+      >
+        JUGADORES
+      </SectionTitle>
+
+      {/* Llamado a registrarse. Solo para quien no tiene cuenta: a un usuario
+          ya registrado le sobraría, y esta es la página donde más sentido tiene
+          invitarlo, porque acaba de ver a la comunidad. */}
+      {!isAuthenticated && (
+        <ArcadePanel className="mb-6 p-5">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="font-medium text-ink">¿Todavía no apareces aquí?</p>
+              <p className="mt-1 text-sm text-ink-soft">
+                Crea tu cuenta y tus resultados se irán acumulando torneo tras torneo.
+              </p>
+            </div>
+            <LinkButton to={routes.register} className="shrink-0">
+              Registrarme
+            </LinkButton>
+          </div>
+        </ArcadePanel>
+      )}
 
       <ArcadePanel beveled={false} className="mb-8 p-4">
         <div className="grid gap-4 sm:grid-cols-3">

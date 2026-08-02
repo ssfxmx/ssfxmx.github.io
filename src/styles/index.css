@@ -15,6 +15,24 @@
     min-height: 100vh;
   }
 
+  /* Rejilla de fondo: da profundidad sin competir con el contenido.
+     Va DETRÁS de todo (z-index negativo) y con el navy del logotipo al 40%,
+     que a 40 píxeles de separación se percibe como textura, no como cuadrícula.
+     Se desvanece hacia abajo para que el pie no quede recargado. */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    background-image:
+      linear-gradient(rgb(var(--color-edge) / 0.4) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--color-edge) / 0.4) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: linear-gradient(to bottom, rgb(0 0 0 / 0.9), transparent 85%);
+    -webkit-mask-image: linear-gradient(to bottom, rgb(0 0 0 / 0.9), transparent 85%);
+  }
+
   /* Textura sutil de CRT sobre todo el sitio. Muy tenue a propósito:
      si un efecto compite con el contenido, sobra. */
   body::before {

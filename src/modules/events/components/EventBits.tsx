@@ -94,11 +94,41 @@ export function EventCard({ event }: { event: EventRecord }) {
   );
 }
 
-/** Bloque destacado del próximo evento, para la portada. */
+/**
+ * Bloque destacado del próximo evento, para la portada.
+ *
+ * Lleva la imagen del evento a la izquierda. Antes solo mostraba texto, así que
+ * en la portada las noticias tenían miniatura y el evento no: el bloque más
+ * importante de la página era el más soso.
+ *
+ * Si el evento no tiene imagen, en su lugar va un marcador con la fecha en
+ * grande. Es preferible a un hueco vacío o a un icono genérico.
+ */
 export function NextEventBanner({ event }: { event: EventRecord }) {
+  const cover = storagePublicUrl('media', event.cover_path);
+  const day = new Date(event.starts_at);
+
   return (
     <ArcadePanel glow className="overflow-hidden">
-      <div className="grid gap-6 p-6 sm:p-8 md:grid-cols-[1fr_auto] md:items-center">
+      <div className="grid gap-0 md:grid-cols-[240px_1fr]">
+        {cover ? (
+          <img
+            src={cover}
+            alt=""
+            className="h-44 w-full object-cover md:h-full"
+          />
+        ) : (
+          <div className="flex h-44 flex-col items-center justify-center border-b border-edge bg-gradient-to-br from-surface-raised to-surface md:h-full md:border-b-0 md:border-r">
+            <span className="font-display text-3xl text-primary neon-text">
+              {day.getDate()}
+            </span>
+            <span className="mt-2 text-xs uppercase tracking-[0.2em] text-ink-dim">
+              {day.toLocaleDateString('es-MX', { month: 'long' })}
+            </span>
+          </div>
+        )}
+
+        <div className="grid gap-6 p-6 sm:p-8 md:grid-cols-[1fr_auto] md:items-center">
         <div className="space-y-4">
           <div className="flex flex-wrap items-center gap-2">
             <EventStatusBadge status={event.status} />
@@ -124,6 +154,7 @@ export function NextEventBanner({ event }: { event: EventRecord }) {
         >
           Ver detalles
         </Link>
+        </div>
       </div>
     </ArcadePanel>
   );
