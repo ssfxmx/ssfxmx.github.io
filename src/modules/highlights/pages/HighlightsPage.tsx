@@ -1,25 +1,23 @@
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { routes } from '@/shared/constants/routes';
-import { formatDate } from '@/shared/utils/date';
 import { PageMeta } from '@/shared/components/seo/PageMeta';
-import {
-  ArcadePanel,
-  EmptyState,
-  ErrorState,
-  SectionTitle,
-  Spinner,
-} from '@/shared/components/ui';
+import { EmptyState, ErrorState, SectionTitle, Spinner } from '@/shared/components/ui';
 import { PLATFORM_LABELS, type Platform } from '@/shared/utils/socialLinks';
 import { useHighlights } from '../hooks';
-import { HighlightCard, HighlightPlayer, PlatformBadge } from '../components/HighlightPlayer';
+import { HighlightCard } from '../components/HighlightPlayer';
 
 /**
  * Galería de highlights.
  *
- * El destacado se muestra grande arriba y el resto en cuadrícula. Los
- * reproductores incrustados usan carga diferida, así que abrir esta página con
- * treinta clips no descarga treinta reproductores.
+ * DOS PROBLEMAS DE LA PRIMERA VERSIÓN, resueltos aquí:
+ *
+ * 1. Un destacado enorme a ancho completo. Con un clip vertical dejaba dos
+ *    franjas negras que ocupaban más de la mitad de la pantalla. Ahora el
+ *    destacado es una tarjeta más de la galería, marcada con borde y etiqueta.
+ *
+ * 2. Cuadrícula de altura uniforme. Mezclar videos verticales y horizontales en
+ *    filas iguales obliga a recortar unos o dejar huecos en otros. Se usa
+ *    disposición en columnas (masonry con CSS puro): cada tarjeta ocupa el alto
+ *    que necesita y se acomoda sola, sin librerías ni cálculos en JavaScript.
  */
 export function HighlightsPage() {
   const { data, isLoading, isError, refetch } = useHighlights();
@@ -30,13 +28,10 @@ export function HighlightsPage() {
     return [...set];
   }, [data]);
 
-  const filtered = useMemo(() => {
+  const visible = useMemo(() => {
     if (!data) return [];
     return platform === 'all' ? data : data.filter((item) => item.platform === platform);
   }, [data, platform]);
-
-  const featured = filtered[0];
-  const rest = filtered.slice(1);
 
   return (
     <>
@@ -59,93 +54,63 @@ export function HighlightsPage() {
 
       {platforms.length > 1 && (
         <div className="mb-8 flex flex-wrap gap-2">
-          <button
+          <FilterChip
+            active={platform === 'all'}
             onClick={() => setPlatform('all')}
-            className={[
-              'rounded border px-3 py-1.5 text-xs transition-colors',
-              platform === 'all'
-                ? 'border-primary bg-primary/15 text-primary'
-                : 'border-edge text-ink-soft hover:border-steel hover:text-steel',
-            ].join(' ')}
-          >
-            Todos
-          </button>
+            label="Todos"
+          />
           {platforms.map((item) => (
-            <button
+            <FilterChip
               key={item}
+              active={platform === item}
               onClick={() => setPlatform(item)}
-              className={[
-                'rounded border px-3 py-1.5 text-xs transition-colors',
-                platform === item
-                  ? 'border-primary bg-primary/15 text-primary'
-                  : 'border-edge text-ink-soft hover:border-steel hover:text-steel',
-              ].join(' ')}
-            >
-              {PLATFORM_LABELS[item]}
-            </button>
-          ))}
-        </div>
-      )}
-
-      {featured && (
-        <section className="mb-12">
-          <ArcadePanel glow className="overflow-hidden">
-            <HighlightPlayer
-              platform={featured.platform}
-              embedId={featured.embed_id}
-              url={featured.url}
-              title={featured.title}
-              thumbnailUrl={featured.thumbnail_url}
-            />
-
-            <div className="space-y-3 p-6">
-              <div className="flex flex-wrap items-center gap-3">
-                <PlatformBadge platform={featured.platform} />
-                {featured.event_slug && featured.event_name && (
-                  <Link
-                    to={routes.eventDetail(featured.event_slug)}
-                    className="text-xs text-steel hover:text-primary"
-                  >
-                    {featured.event_name}
-                  </Link>
-                )}
-                {featured.published_at && (
-                  <span className="text-xs text-ink-dim">
-                    {formatDate(featured.published_at)}
-                  </span>
-                )}
-              </div>
-
-              <h2 className="font-display text-sm leading-relaxed text-primary neon-text">
-                {featured.title}
-              </h2>
-
-              {featured.description && (
-                <p className="max-w-2xl text-sm leading-relaxed text-ink-soft">
-                  {featured.description}
-                </p>
-              )}
-            </div>
-          </ArcadePanel>
-        </section>
-      )}
-
-      {rest.length > 0 && (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {rest.map((item) => (
-            <HighlightCard
-              key={item.id}
-              title={item.title}
-              description={item.description}
-              url={item.url}
-              platform={item.platform}
-              embedId={item.embed_id}
-              thumbnailUrl={item.thumbnail_url}
-              eventName={item.event_name}
+              label={PLATFORM_LABELS[item]}
             />
           ))}
         </div>
       )}
+
+      {/* Columnas CSS: cada tarjeta conserva su alto natural y se acomoda sola.
+          `break-inside-avoid` impide que una tarjeta se parta entre columnas. */}
+      <div className="columns-1 gap-5 sm:columns-2 xl:columns-3 [&>*]:mb-5 [&>*]:break-inside-avoid">
+        {visible.map((item) => (
+          <HighlightCard
+            key={item.id}
+            title={item.title}
+            description={item.description}
+            url={item.url}
+            platform={item.platform}
+            embedId={item.embed_id}
+            thumbnailUrl={item.thumbnail_url}
+            eventName={item.event_name}
+            featured={item.is_featured}
+          />
+        ))}
+      </div>
     </>
+  );
+}
+
+function FilterChip({
+  active,
+  onClick,
+  label,
+}: {
+  active: boolean;
+  onClick: () => void;
+  label: string;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={[
+        'rounded border px-3 py-1.5 text-xs transition-colors',
+        active
+          ? 'border-primary bg-primary/15 text-primary'
+          : 'border-edge text-ink-soft hover:border-steel hover:text-steel',
+      ].join(' ')}
+    >
+      {label}
+    </button>
   );
 }

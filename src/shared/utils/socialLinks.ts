@@ -28,6 +28,9 @@ export type Platform =
   | 'kick'
   | 'other';
 
+/** Proporción del video. Determina el marco en el que se muestra. */
+export type Orientation = 'landscape' | 'portrait';
+
 export interface DetectedLink {
   platform: Platform;
   /** Identificador del video dentro de la plataforma, si se pudo extraer. */
@@ -38,6 +41,29 @@ export interface DetectedLink {
   thumbnailUrl: string | null;
   /** Nombre para mostrar al usuario. */
   label: string;
+  /** Vertical u horizontal, deducido del tipo de enlace. */
+  orientation: Orientation;
+}
+
+/**
+ * Deduce si el video es vertical.
+ *
+ * Los formatos cortos de las redes son 9:16 y encajarlos en un marco 16:9 deja
+ * dos franjas negras que ocupan más de la mitad del ancho. No hay forma de
+ * preguntarle la proporción a la plataforma sin usar su API, pero el propio
+ * enlace lo delata: /shorts/, /reel/, TikTok y los enlaces de compartir de
+ * Facebook son siempre verticales.
+ */
+export function detectOrientation(url: string): Orientation {
+  const vertical = [
+    /youtube\.com\/shorts\//i,
+    /tiktok\.com\//i,
+    /instagram\.com\/(reel|reels)\//i,
+    /facebook\.com\/share\/r\//i,
+    /facebook\.com\/reel\//i,
+  ];
+
+  return vertical.some((pattern) => pattern.test(url)) ? 'portrait' : 'landscape';
 }
 
 export const PLATFORM_LABELS: Record<Platform, string> = {
@@ -165,6 +191,7 @@ export function detectLink(rawUrl: string): DetectedLink {
         embeddable: entry.embeddable && Boolean(id),
         thumbnailUrl,
         label: PLATFORM_LABELS[entry.platform],
+        orientation: detectOrientation(url),
       };
     }
   }
@@ -175,6 +202,7 @@ export function detectLink(rawUrl: string): DetectedLink {
     embeddable: false,
     thumbnailUrl: null,
     label: PLATFORM_LABELS.other,
+    orientation: detectOrientation(url),
   };
 }
 

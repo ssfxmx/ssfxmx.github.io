@@ -1,23 +1,27 @@
 import { ExternalLink, Play } from 'lucide-react';
 import { ArcadePanel, Badge } from '@/shared/components/ui';
 import {
+  detectOrientation,
   embedUrl,
   PLATFORM_LABELS,
   PLATFORM_TONES,
+  type Orientation,
   type Platform,
 } from '@/shared/utils/socialLinks';
 
 /**
  * Reproductor de un highlight.
  *
- * YouTube y Twitch se muestran dentro del sitio con un iframe. El resto de
- * plataformas se presenta como una tarjeta que abre la publicación original,
- * porque incrustarlas exigiría cargar sus scripts: rastreadores de terceros
- * para todos los visitantes, peso extra en móvil, y una página que se rompe
- * cada vez que ellos cambian algo.
+ * YouTube y Twitch se muestran dentro del sitio con un iframe. El resto se
+ * presenta como tarjeta que abre la publicación original, porque incrustarlas
+ * exigiría cargar sus scripts: rastreadores de terceros para todos los
+ * visitantes y una página que se rompe cuando ellos cambian algo.
  *
- * Los iframes van con `loading="lazy"`: un listado con doce clips no debe
- * descargar doce reproductores de golpe.
+ * PROPORCIÓN. El marco se adapta al video: 16:9 para los horizontales y 9:16
+ * para Shorts, Reels y TikTok. Meter un vertical en un marco horizontal deja
+ * dos franjas negras que se comen más de la mitad del ancho, y en una galería
+ * donde la mayoría de los clips son cortos verticales, eso es casi toda la
+ * página desperdiciada.
  */
 export function HighlightPlayer({
   platform,
@@ -25,18 +29,24 @@ export function HighlightPlayer({
   url,
   title,
   thumbnailUrl,
+  orientation,
 }: {
   platform: Platform;
   embedId: string | null;
   url: string;
   title: string;
   thumbnailUrl?: string | null;
+  orientation?: Orientation;
 }) {
   const src = embedUrl(platform, embedId);
+  const shape = orientation ?? detectOrientation(url);
+  const frame = shape === 'portrait' ? 'aspect-[9/16]' : 'aspect-video';
 
   if (src) {
     return (
-      <div className="relative aspect-video w-full overflow-hidden rounded-lg border border-edge bg-black">
+      <div
+        className={`relative ${frame} w-full overflow-hidden rounded-lg border border-edge bg-black`}
+      >
         <iframe
           src={src}
           title={title}
@@ -50,7 +60,6 @@ export function HighlightPlayer({
     );
   }
 
-  // Plataformas que no se incrustan: tarjeta con enlace externo.
   return (
     <a
       href={url}
@@ -59,7 +68,9 @@ export function HighlightPlayer({
       className="group block"
       aria-label={`Ver en ${PLATFORM_LABELS[platform]}: ${title}`}
     >
-      <div className="relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-lg border border-edge bg-surface-raised transition-colors group-hover:border-primary/60">
+      <div
+        className={`relative flex ${frame} w-full items-center justify-center overflow-hidden rounded-lg border border-edge bg-surface-raised transition-colors group-hover:border-primary/60`}
+      >
         {thumbnailUrl && (
           <img
             src={thumbnailUrl}
@@ -86,7 +97,7 @@ export function PlatformBadge({ platform }: { platform: Platform }) {
   return <Badge tone={PLATFORM_TONES[platform]}>{PLATFORM_LABELS[platform]}</Badge>;
 }
 
-/** Tarjeta de highlight para listados. */
+/** Tarjeta de highlight para la galería. */
 export function HighlightCard({
   title,
   description,
@@ -95,7 +106,7 @@ export function HighlightCard({
   embedId,
   thumbnailUrl,
   eventName,
-  onOpen,
+  featured = false,
 }: {
   title: string;
   description?: string | null;
@@ -104,10 +115,15 @@ export function HighlightCard({
   embedId: string | null;
   thumbnailUrl?: string | null;
   eventName?: string | null;
-  onOpen?: () => void;
+  featured?: boolean;
 }) {
   return (
-    <ArcadePanel className="flex h-full flex-col overflow-hidden">
+    <ArcadePanel
+      className={[
+        'flex flex-col overflow-hidden',
+        featured ? 'border-primary/50 shadow-neon' : '',
+      ].join(' ')}
+    >
       <HighlightPlayer
         platform={platform}
         embedId={embedId}
@@ -116,21 +132,14 @@ export function HighlightCard({
         thumbnailUrl={thumbnailUrl}
       />
 
-      <div className="flex flex-1 flex-col gap-2 p-5">
+      <div className="flex flex-col gap-2 p-4">
         <div className="flex flex-wrap items-center gap-2">
+          {featured && <Badge tone="primary">Destacado</Badge>}
           <PlatformBadge platform={platform} />
           {eventName && <span className="text-xs text-ink-dim">{eventName}</span>}
         </div>
 
-        <h3 className="font-semibold leading-snug text-ink">
-          {onOpen ? (
-            <button onClick={onOpen} className="text-left hover:text-primary">
-              {title}
-            </button>
-          ) : (
-            title
-          )}
-        </h3>
+        <h3 className="font-semibold leading-snug text-ink">{title}</h3>
 
         {description && (
           <p className="text-sm leading-relaxed text-ink-soft">{description}</p>
