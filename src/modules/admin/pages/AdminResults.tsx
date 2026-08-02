@@ -142,6 +142,28 @@ export function AdminResultsForm() {
     return map;
   }, [players]);
 
+  /**
+   * Detecta jugadores repetidos antes de intentar guardar.
+   *
+   * IMPORTANTE: este useMemo tiene que declararse ANTES de los `return`
+   * tempranos de abajo. Estaba después, y provocaba el error #310 de React
+   * ("se renderizaron más hooks que en el render anterior"): durante la carga
+   * el componente salía antes de llegar aquí y ejecutaba un hook menos que en
+   * el render siguiente. Regla general: todos los hooks van arriba, sin
+   * excepción y sin condiciones.
+   */
+  const duplicates = useMemo(() => {
+    const seen = new Set<string>();
+    const repeated = new Set<string>();
+    for (const row of rows) {
+      const key = row.playerId ?? row.guestNickname.trim().toLowerCase();
+      if (!key) continue;
+      if (seen.has(key)) repeated.add(key);
+      seen.add(key);
+    }
+    return repeated;
+  }, [rows]);
+
   if (loadingEvent || loadingResults) return <Spinner />;
   if (!event) return <Alert tone="danger">Evento no encontrado.</Alert>;
 
@@ -158,19 +180,6 @@ export function AdminResultsForm() {
       prev.filter((_, i) => i !== index).map((row, i) => ({ ...row, position: i + 1 }))
     );
   }
-
-  /** Detecta jugadores repetidos antes de intentar guardar. */
-  const duplicates = useMemo(() => {
-    const seen = new Set<string>();
-    const repeated = new Set<string>();
-    for (const row of rows) {
-      const key = row.playerId ?? row.guestNickname.trim().toLowerCase();
-      if (!key) continue;
-      if (seen.has(key)) repeated.add(key);
-      seen.add(key);
-    }
-    return repeated;
-  }, [rows]);
 
   async function handleSave() {
     setError('');
