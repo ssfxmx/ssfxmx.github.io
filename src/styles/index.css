@@ -78,50 +78,162 @@
       0 0 24px rgb(var(--color-primary) / 0.2);
   }
 
-  /* Contenido en Markdown: noticias y tutoriales */
+  /* ==========================================================================
+     Contenido largo: noticias y tutoriales
+     ==========================================================================
+     Leer texto largo en pantalla oscura cansa más que en papel, así que aquí
+     se corrigen las cuatro causas habituales:
+
+       1. CONTRASTE. El cuerpo va en --color-ink, no en el gris secundario.
+          Un gris apagado sobre negro obliga a forzar la vista párrafo tras
+          párrafo.
+       2. MEDIDA. Se limita a 68 caracteres por línea. Más ancho y el ojo se
+          pierde al saltar de renglón; es el error más común en pantallas
+          grandes.
+       3. TAMAÑO Y AIRE. 17px con interlineado 1.75. Lo que sirve para una
+          interfaz se queda corto para leer diez minutos seguidos.
+       4. RITMO. Antes todo pesaba igual y no había dónde descansar la vista.
+          Ahora los títulos, los pasos numerados y los avisos crean puntos de
+          anclaje para escanear el texto sin leerlo entero.
+     ========================================================================== */
+
   .prose-arcade {
-    @apply text-ink-soft leading-relaxed;
+    @apply text-ink;
+    font-size: 17px;
+    line-height: 1.75;
+    max-width: 68ch;
   }
+
+  /* Entradilla: el primer párrafo entra más grande y hace de resumen. */
+  .prose-arcade > p:first-child {
+    @apply text-ink-soft;
+    font-size: 19px;
+    line-height: 1.65;
+    margin-bottom: 2rem;
+  }
+
   .prose-arcade h2 {
-    @apply font-display text-primary text-base mt-10 mb-4 leading-relaxed;
+    @apply font-display text-primary relative mt-14 mb-5 pl-4;
+    font-size: 15px;
+    line-height: 1.7;
   }
+
+  /* Barra de acento a la izquierda: ancla visual para escanear la página. */
+  .prose-arcade h2::before {
+    content: '';
+    @apply absolute left-0 top-1 bottom-1 w-1;
+    background: linear-gradient(
+      to bottom,
+      rgb(var(--color-primary)),
+      rgb(var(--color-magenta))
+    );
+  }
+
+  .prose-arcade h2 + p,
+  .prose-arcade h3 + p {
+    margin-top: 0;
+  }
+
   .prose-arcade h3 {
-    @apply font-semibold text-ink text-lg mt-8 mb-3;
+    @apply text-cyan font-semibold mt-10 mb-3;
+    font-size: 18px;
   }
+
   .prose-arcade p {
-    @apply mb-4;
+    @apply mb-5;
   }
+
+  /* Las negritas marcan el término clave del párrafo: se resaltan en ámbar
+     para que al hojear se entienda de qué va cada bloque. */
+  .prose-arcade strong {
+    @apply text-primary font-semibold;
+  }
+
   .prose-arcade a {
-    @apply text-cyan underline underline-offset-4 hover:text-primary transition-colors;
+    @apply text-cyan underline underline-offset-4 decoration-cyan/40
+           hover:text-primary hover:decoration-primary transition-colors;
   }
+
+  /* Listas con viñeta cuadrada estilo arcade, en lugar del punto por defecto. */
   .prose-arcade ul {
-    @apply list-disc pl-6 mb-4 space-y-1;
+    @apply mb-6 space-y-2.5 pl-0;
+    list-style: none;
   }
+  .prose-arcade ul > li {
+    @apply relative pl-6;
+  }
+  .prose-arcade ul > li::before {
+    content: '';
+    @apply absolute left-0 h-1.5 w-1.5 bg-primary;
+    top: 0.7em;
+  }
+
+  /* Listas numeradas como pasos: el número en su propia ficha. En un tutorial
+     de instalación, poder ver de un vistazo cuántos pasos faltan importa. */
   .prose-arcade ol {
-    @apply list-decimal pl-6 mb-4 space-y-1;
+    @apply mb-6 space-y-4 pl-0;
+    list-style: none;
+    counter-reset: paso;
   }
+  .prose-arcade ol > li {
+    @apply relative pl-12;
+    counter-increment: paso;
+    min-height: 2rem;
+  }
+  .prose-arcade ol > li::before {
+    content: counter(paso);
+    @apply absolute left-0 top-0 flex h-8 w-8 items-center justify-center
+           border border-primary/40 bg-primary/10 font-display text-primary;
+    font-size: 11px;
+  }
+
+  .prose-arcade li > ul,
+  .prose-arcade li > ol {
+    @apply mt-2.5 mb-0;
+  }
+
   .prose-arcade code {
-    @apply bg-surface-raised text-primary px-1.5 py-0.5 rounded text-sm font-mono;
+    @apply bg-surface-raised text-primary px-1.5 py-0.5 rounded text-[0.9em] font-mono;
   }
   .prose-arcade pre {
-    @apply bg-surface border border-edge rounded-lg p-4 overflow-x-auto mb-4 text-sm;
+    @apply bg-surface border border-edge rounded-lg p-4 overflow-x-auto mb-6 text-sm;
+    max-width: 100%;
   }
   .prose-arcade pre code {
-    @apply bg-transparent p-0 text-ink-soft;
+    @apply bg-transparent p-0 text-ink-soft text-sm;
   }
+
+  /* Las citas se convierten en aviso destacado: es como se usan en la
+     práctica dentro de un tutorial ("ojo con esto"). */
   .prose-arcade blockquote {
-    @apply border-l-2 border-primary pl-4 italic text-ink-dim my-4;
+    @apply my-7 border-l-2 border-cyan bg-cyan/5 px-5 py-4 not-italic text-ink-soft;
   }
+  .prose-arcade blockquote p:last-child {
+    @apply mb-0;
+  }
+
   .prose-arcade img {
-    @apply rounded-lg border border-edge my-6 max-w-full;
+    @apply rounded-lg border border-edge my-8 max-w-full;
   }
+
+  /* Separador con la barra de energía del sistema de diseño. */
+  .prose-arcade hr {
+    @apply my-10 h-0.5 border-0;
+    background: linear-gradient(
+      to right,
+      rgb(var(--color-primary)),
+      rgb(var(--color-magenta) / 0.4),
+      transparent
+    );
+  }
+
   .prose-arcade table {
-    @apply w-full text-sm mb-4 border border-edge;
+    @apply w-full text-sm my-6 border border-edge;
   }
   .prose-arcade th {
-    @apply bg-surface-raised text-ink px-3 py-2 text-left font-semibold;
+    @apply bg-surface-raised text-ink px-3 py-2.5 text-left font-semibold;
   }
   .prose-arcade td {
-    @apply border-t border-edge px-3 py-2;
+    @apply border-t border-edge px-3 py-2.5 align-top;
   }
 }

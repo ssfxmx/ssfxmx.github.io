@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, Clock, GraduationCap } from 'lucide-react';
+import { ArrowLeft, Clock, GraduationCap, ListOrdered } from 'lucide-react';
 import { routes } from '@/shared/constants/routes';
 import { storagePublicUrl } from '@/shared/lib/supabase';
-import { DIFFICULTY_LABELS, stripMarkdown, truncate } from '@/shared/utils/format';
+import { DIFFICULTY_LABELS, slugify, stripMarkdown, truncate } from '@/shared/utils/format';
 import { PageMeta } from '@/shared/components/seo/PageMeta';
 import { Markdown } from '@/shared/components/ui/Markdown';
 import {
@@ -119,18 +119,72 @@ export function TutorialsListPage() {
   );
 }
 
+/**
+ * Índice de la guía.
+ *
+ * Se genera leyendo los encabezados de nivel 2 del Markdown. En un tutorial de
+ * instalación, poder ver de un vistazo cuántas secciones faltan cambia la
+ * sensación de "esto es larguísimo" por "son seis pasos". También permite
+ * volver a un punto concreto sin releer.
+ *
+ * Se oculta si hay menos de tres secciones: un índice de dos entradas estorba
+ * más de lo que ayuda.
+ */
+function TableOfContents({ body }: { body: string }) {
+  const sections = useMemo(() => {
+    const matches = [...body.matchAll(/^##\s+(.+)$/gm)];
+    return matches.map((match) => {
+      const title = match[1]!.trim();
+      return { title, id: slugify(title) };
+    });
+  }, [body]);
+
+  if (sections.length < 3) return null;
+
+  return (
+    <nav aria-label="Contenido de la guía" className="mb-10">
+      <ArcadePanel beveled={false} className="p-5">
+        <div className="mb-3 flex items-center gap-2">
+          <ListOrdered size={15} className="text-primary" />
+          <h2 className="font-display text-[10px] uppercase tracking-wide text-ink-dim">
+            En esta guía
+          </h2>
+        </div>
+
+        <ol className="space-y-2">
+          {sections.map((section, index) => (
+            <li key={section.id} className="flex gap-3 text-sm">
+              <span className="w-5 shrink-0 text-right font-display text-[10px] text-ink-dim">
+                {index + 1}
+              </span>
+              <a
+                href={`#${section.id}`}
+                className="text-ink-soft transition-colors hover:text-primary"
+              >
+                {section.title}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </ArcadePanel>
+    </nav>
+  );
+}
+
 export function TutorialDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const { data, isLoading, isError, refetch } = useTutorialDetail(slug);
+  const { data: categories } = useTutorialCategories();
 
   if (isLoading) return <Spinner />;
   if (isError) return <ErrorState onRetry={() => refetch()} />;
   if (!data) return <EmptyState title="Tutorial no encontrado" />;
 
   const cover = storagePublicUrl('media', data.cover_path);
+  const category = categories?.find((c) => c.id === data.category_id);
 
   return (
-    <article className="mx-auto max-w-3xl">
+    <article className="mx-auto max-w-2xl">
       <PageMeta
         title={data.title}
         description={data.summary ?? truncate(stripMarkdown(data.body_md), 160)}
@@ -139,37 +193,58 @@ export function TutorialDetailPage() {
 
       <Link
         to={routes.tutorials}
-        className="mb-6 inline-flex items-center gap-2 text-sm text-ink-soft hover:text-primary"
+        className="mb-8 inline-flex items-center gap-2 text-sm text-ink-soft hover:text-primary"
       >
         <ArrowLeft size={16} /> Volver a tutoriales
       </Link>
 
-      <header className="mb-8 space-y-4">
-        <div className="flex flex-wrap items-center gap-2">
+      <header className="mb-10">
+        {category && (
+          <p className="mb-4 font-display text-[10px] uppercase tracking-[0.2em] text-cyan">
+            {category.name}
+          </p>
+        )}
+
+        <h1 className="font-display text-lg leading-[1.8] text-primary neon-text sm:text-xl">
+          {data.title}
+        </h1>
+
+        {data.summary && (
+          <p className="mt-5 text-[19px] leading-relaxed text-ink-soft">{data.summary}</p>
+        )}
+
+        <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-edge pt-5">
           <Badge tone={data.difficulty === 1 ? 'success' : data.difficulty === 2 ? 'primary' : 'danger'}>
             {DIFFICULTY_LABELS[data.difficulty] ?? 'Guía'}
           </Badge>
           {data.estimated_min && (
-            <span className="flex items-center gap-1 text-xs text-ink-dim">
-              <Clock size={12} /> {data.estimated_min} minutos
+            <span className="flex items-center gap-1.5 text-xs text-ink-dim">
+              <Clock size={13} /> {data.estimated_min} minutos de lectura
             </span>
           )}
         </div>
-
-        <h1 className="font-display text-xl leading-relaxed text-primary neon-text sm:text-2xl">
-          {data.title}
-        </h1>
-
-        {data.summary && <p className="text-ink-soft">{data.summary}</p>}
-
-        <div className="h-1 w-full bg-gradient-to-r from-primary via-magenta to-transparent" />
       </header>
 
       {cover && (
-        <img src={cover} alt="" className="mb-8 w-full rounded-lg border border-edge" />
+        <img src={cover} alt="" className="mb-10 w-full rounded-lg border border-edge" />
       )}
 
+      <TableOfContents body={data.body_md} />
+
       <Markdown>{data.body_md}</Markdown>
+
+      <footer className="mt-16 border-t border-edge pt-8">
+        <p className="text-sm text-ink-dim">
+          ¿Algo no quedó claro o encontraste un error en la guía? Escríbenos y la
+          corregimos.
+        </p>
+        <Link
+          to={routes.tutorials}
+          className="mt-4 inline-flex items-center gap-2 text-sm text-cyan hover:text-primary"
+        >
+          <ArrowLeft size={15} /> Ver todas las guías
+        </Link>
+      </footer>
     </article>
   );
 }
