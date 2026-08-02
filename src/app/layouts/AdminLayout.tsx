@@ -3,6 +3,8 @@ import { Link, NavLink, Outlet } from 'react-router-dom';
 import {
   BarChart3,
   CalendarDays,
+  Clapperboard,
+  GraduationCap,
   Home,
   Menu,
   Monitor,
@@ -31,7 +33,8 @@ const SECTIONS = [
       { to: routes.adminNews, label: 'Noticias', icon: Newspaper },
       { to: routes.adminEvents, label: 'Eventos', icon: CalendarDays },
       { to: routes.adminResults, label: 'Resultados', icon: Trophy },
-      { to: routes.adminTutorials, label: 'Tutoriales', icon: BarChart3 },
+      { to: routes.adminHighlights, label: 'Highlights', icon: Clapperboard },
+      { to: routes.adminTutorials, label: 'Tutoriales', icon: GraduationCap },
     ],
   },
   {

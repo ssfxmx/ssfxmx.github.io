@@ -20,6 +20,9 @@ export const routes = {
   players: '/jugadores',
   playerDetail: (nickname: string) => `/jugadores/${encodeURIComponent(nickname)}`,
 
+  highlights: '/highlights',
+  highlightDetail: (slug: string) => `/highlights/${slug}`,
+
   tutorials: '/tutoriales',
   tutorialDetail: (slug: string) => `/tutoriales/${slug}`,
 
@@ -45,6 +48,9 @@ export const routes = {
   adminTutorials: '/admin/tutoriales',
   adminTutorialsNew: '/admin/tutoriales/nuevo',
   adminTutorialsEdit: (id: string) => `/admin/tutoriales/${id}`,
+  adminHighlights: '/admin/highlights',
+  adminHighlightsNew: '/admin/highlights/nuevo',
+  adminHighlightsEdit: (id: string) => `/admin/highlights/${id}`,
   adminReports: '/admin/reportes',
   adminSettings: '/admin/configuracion',
   adminOverlays: '/admin/stream/overlays',
@@ -59,6 +65,7 @@ export const MAIN_NAV = [
   { label: 'Noticias', to: routes.news },
   { label: 'Eventos', to: routes.events },
   { label: 'Resultados', to: routes.results },
+  { label: 'Highlights', to: routes.highlights },
   { label: 'Jugadores', to: routes.players },
   { label: 'Tutoriales', to: routes.tutorials },
 ] as const;

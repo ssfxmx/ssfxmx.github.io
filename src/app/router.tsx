@@ -17,6 +17,7 @@ import {
   TutorialDetailPage,
   TutorialsListPage,
 } from '@/modules/tutorials/pages/TutorialsPages';
+import { HighlightsPage } from '@/modules/highlights/pages/HighlightsPage';
 import {
   AuthCallbackPage,
   LoginPage,
@@ -37,6 +38,10 @@ import {
   AdminTutorialsList,
 } from '@/modules/admin/pages/AdminTutorials';
 import { AdminSettingsPage } from '@/modules/admin/pages/AdminSettings';
+import {
+  AdminHighlightForm,
+  AdminHighlightsList,
+} from '@/modules/admin/pages/AdminHighlights';
 import { EmptyState, LinkButton } from '@/shared/components/ui';
 
 function NotFoundPage() {
@@ -79,6 +84,8 @@ export const router = createBrowserRouter(
 
         { path: routes.players, element: <PlayersListPage /> },
         { path: '/jugadores/:nickname', element: <PlayerProfilePage /> },
+
+        { path: routes.highlights, element: <HighlightsPage /> },
 
         { path: routes.tutorials, element: <TutorialsListPage /> },
         { path: '/tutoriales/:slug', element: <TutorialDetailPage /> },
@@ -137,6 +144,9 @@ export const router = createBrowserRouter(
 
         { path: routes.adminTutorials, element: <AdminTutorialsList /> },
         { path: '/admin/tutoriales/:id', element: <AdminTutorialForm /> },
+
+        { path: routes.adminHighlights, element: <AdminHighlightsList /> },
+        { path: '/admin/highlights/:id', element: <AdminHighlightForm /> },
 
         { path: routes.adminSettings, element: <AdminSettingsPage /> },
 
