@@ -109,7 +109,19 @@ const PATTERNS: Array<{
   {
     platform: 'facebook',
     embeddable: false,
-    regexes: [/facebook\.com\/.+\/videos\/(\d+)/i, /fb\.watch\/([\w-]+)/i],
+    regexes: [
+      // Enlaces del botón "Compartir". Son los MÁS habituales en la práctica y
+      // faltaban en la primera versión: un clip pegado así se guardaba como
+      // "enlace genérico" en lugar de Facebook.
+      //   /share/r/  reels y videos
+      //   /share/v/  videos
+      //   /share/p/  publicaciones
+      /facebook\.com\/share\/[rvp]\/([\w-]+)/i,
+      /facebook\.com\/reel\/(\d+)/i,
+      /facebook\.com\/watch\/?\?v=(\d+)/i,
+      /facebook\.com\/[\w.]+\/videos\/(\d+)/i,
+      /fb\.watch\/([\w-]+)/i,
+    ],
   },
   {
     platform: 'kick',
