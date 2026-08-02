@@ -7,6 +7,7 @@ import { friendlyError } from '@/shared/lib/supabase';
 import { queryKeys } from '@/shared/lib/queryClient';
 import { prepareAvatarFile, resolveAvatar } from '@/shared/utils/avatar';
 import { COUNTRIES, countryName } from '@/shared/utils/format';
+import { CitySelect, useCities, type CityValue } from '@/shared/components/ui/CitySelect';
 import { formatDate } from '@/shared/utils/date';
 import { useCharacters } from '@/shared/hooks';
 import { PageMeta } from '@/shared/components/seo/PageMeta';
@@ -33,6 +34,7 @@ import * as auth from '@/modules/auth/services/auth.service';
 export function ProfilePage() {
   const { session, profile } = useSession();
   const { data: characters } = useCharacters();
+  const { data: cities } = useCities();
 
   const { data, isLoading } = useQuery({
     queryKey: queryKeys.profile(session?.user.id ?? ''),
@@ -43,10 +45,16 @@ export function ProfilePage() {
   if (isLoading || !profile) return <Spinner />;
 
   const character = characters?.find((c) => c.id === profile.main_character_id);
+
+  // La ciudad puede venir del catálogo o ser texto libre de quien eligió "Otro".
+  const cityName =
+    cities?.find((c) => c.id === profile.city_id)?.name ?? profile.city_custom ?? '';
+
   const avatar = resolveAvatar({
     ...profile,
     character_initials: character?.initials,
     character_color: character?.color_hex,
+    character_icon_path: character?.icon_path,
   });
 
   return (
@@ -74,7 +82,7 @@ export function ProfilePage() {
           <div>
             <h2 className="font-display text-sm text-primary">{profile.nickname}</h2>
             <p className="mt-2 text-sm text-ink-soft">
-              {profile.city ? `${profile.city}, ` : ''}
+              {cityName ? `${cityName}, ` : ''}
               {countryName(profile.country_code)}
             </p>
             {character && <p className="mt-1 text-sm text-cyan">Main: {character.name}</p>}
@@ -127,12 +135,18 @@ export function ProfileEditPage() {
   const { data: characters } = useCharacters();
   const navigate = useNavigate();
 
-  const [form, setForm] = useState({
-    city: '',
+  const [form, setForm] = useState<{
+    city: CityValue;
+    country_code: string;
+    bio: string;
+    main_character_id: number;
+    avatar_source: 'character' | 'upload';
+  }>({
+    city: { cityId: null, cityCustom: '' },
     country_code: 'MX',
     bio: '',
     main_character_id: 0,
-    avatar_source: 'character' as 'character' | 'upload',
+    avatar_source: 'character',
   });
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -149,7 +163,7 @@ export function ProfileEditPage() {
   useEffect(() => {
     if (!profile) return;
     setForm({
-      city: profile.city ?? '',
+      city: { cityId: profile.city_id, cityCustom: profile.city_custom ?? '' },
       country_code: profile.country_code,
       bio: profile.bio ?? '',
       main_character_id: profile.main_character_id ?? 0,
@@ -193,7 +207,8 @@ export function ProfileEditPage() {
       }
 
       await auth.updateOwnProfile(session!.user.id, {
-        city: form.city.trim() || null,
+        city_id: form.city.cityId,
+        city_custom: form.city.cityId ? null : form.city.cityCustom.trim() || null,
         country_code: form.country_code,
         bio: form.bio.trim() || null,
         main_character_id: form.main_character_id || null,
@@ -298,28 +313,23 @@ export function ProfileEditPage() {
             </Select>
           </Field>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="País">
-              <Select
-                value={form.country_code}
-                onChange={(e) => setForm((prev) => ({ ...prev, country_code: e.target.value }))}
-              >
-                {COUNTRIES.map((country) => (
-                  <option key={country.code} value={country.code}>
-                    {country.name}
-                  </option>
-                ))}
-              </Select>
-            </Field>
+          <Field label="País">
+            <Select
+              value={form.country_code}
+              onChange={(e) => setForm((prev) => ({ ...prev, country_code: e.target.value }))}
+            >
+              {COUNTRIES.map((country) => (
+                <option key={country.code} value={country.code}>
+                  {country.name}
+                </option>
+              ))}
+            </Select>
+          </Field>
 
-            <Field label="Ciudad">
-              <Input
-                value={form.city}
-                onChange={(e) => setForm((prev) => ({ ...prev, city: e.target.value }))}
-                maxLength={80}
-              />
-            </Field>
-          </div>
+          <CitySelect
+            value={form.city}
+            onChange={(city) => setForm((prev) => ({ ...prev, city }))}
+          />
 
           <Field label="Bio" hint={`${form.bio.length}/280 caracteres. Es público.`}>
             <Textarea

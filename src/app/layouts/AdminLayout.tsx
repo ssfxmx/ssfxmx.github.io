@@ -6,6 +6,7 @@ import {
   Clapperboard,
   GraduationCap,
   Home,
+  MapPin,
   Menu,
   Monitor,
   Newspaper,
@@ -43,6 +44,7 @@ const SECTIONS = [
     items: [
       { to: routes.adminPlayers, label: 'Jugadores', icon: Users },
       { to: routes.adminCharacters, label: 'Personajes', icon: Swords },
+      { to: routes.adminCities, label: 'Ciudades', icon: MapPin },
     ],
   },
   {

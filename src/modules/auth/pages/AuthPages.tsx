@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { routes } from '@/shared/constants/routes';
 import { friendlyError } from '@/shared/lib/supabase';
 import { COUNTRIES } from '@/shared/utils/format';
+import { CitySelect } from '@/shared/components/ui/CitySelect';
 import { useCharacters } from '@/shared/hooks';
 import { PageMeta } from '@/shared/components/seo/PageMeta';
 import {
@@ -133,9 +134,21 @@ const registerSchema = z.object({
   password: z.string().min(8, 'Mínimo 8 caracteres.'),
   birthDate: z.string().min(1, 'Selecciona tu fecha de nacimiento.'),
   countryCode: z.string().length(2),
-  city: z.string().min(2, 'Escribe tu ciudad.').max(80),
   mainCharacterId: z.number().int().positive('Elige tu personaje principal.'),
-});
+})
+  // La ciudad admite dos formas: elegida del catálogo o escrita a mano tras
+  // seleccionar "Otro". Se valida el conjunto, no cada campo por separado.
+  .and(
+    z
+      .object({
+        cityId: z.number().int().positive().nullable(),
+        cityCustom: z.string(),
+      })
+      .refine((v) => v.cityId !== null || v.cityCustom.trim().length >= 2, {
+        message: 'Elige tu ciudad o escríbela si no está en la lista.',
+        path: ['cityId'],
+      })
+  );
 
 export function RegisterPage() {
   const { data: characters, isLoading } = useCharacters();
@@ -146,7 +159,8 @@ export function RegisterPage() {
     password: '',
     birthDate: '',
     countryCode: 'MX',
-    city: '',
+    cityId: null as number | null,
+    cityCustom: '',
     mainCharacterId: 0,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -278,24 +292,31 @@ export function RegisterPage() {
             />
           </Field>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="País" required error={errors.countryCode}>
-              <Select
-                value={form.countryCode}
-                onChange={(e) => set('countryCode', e.target.value)}
-              >
-                {COUNTRIES.map((country) => (
-                  <option key={country.code} value={country.code}>
-                    {country.name}
-                  </option>
-                ))}
-              </Select>
-            </Field>
+          <Field label="País" required error={errors.countryCode}>
+            <Select
+              value={form.countryCode}
+              onChange={(e) => set('countryCode', e.target.value)}
+            >
+              {COUNTRIES.map((country) => (
+                <option key={country.code} value={country.code}>
+                  {country.name}
+                </option>
+              ))}
+            </Select>
+          </Field>
 
-            <Field label="Ciudad" required error={errors.city}>
-              <Input value={form.city} onChange={(e) => set('city', e.target.value)} />
-            </Field>
-          </div>
+          <CitySelect
+            required
+            error={errors.cityId}
+            value={{ cityId: form.cityId, cityCustom: form.cityCustom }}
+            onChange={(city) =>
+              setForm((prev) => ({
+                ...prev,
+                cityId: city.cityId,
+                cityCustom: city.cityCustom,
+              }))
+            }
+          />
 
           <Field
             label="Personaje principal"

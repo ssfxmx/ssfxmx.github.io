@@ -21,7 +21,8 @@ import {
 } from '@/shared/components/ui';
 import { usePlayerHistory } from '@/modules/results/hooks';
 import type { PlayerPublic } from '@/shared/types/database';
-import { useCities, usePlayerDetail, usePlayerStats, usePlayers } from '../hooks';
+import { CityFilter } from '@/shared/components/ui/CitySelect';
+import { usePlayerDetail, usePlayerStats, usePlayers } from '../hooks';
 
 /* ========================================================================== */
 /* Directorio                                                                  */
@@ -58,16 +59,15 @@ function PlayerCard({ player }: { player: PlayerPublic }) {
 export function PlayersListPage() {
   const [search, setSearch] = useState('');
   const [characterId, setCharacterId] = useState<number | null>(null);
-  const [city, setCity] = useState<string | null>(null);
+  const [cityId, setCityId] = useState<number | null>(null);
 
   const debouncedSearch = useDebounce(search, 350);
   const { data: characters } = useCharacters();
-  const { data: cities } = useCities();
 
   const { data, isLoading, isError, refetch } = usePlayers({
     search: debouncedSearch,
     characterId,
-    city,
+    cityId,
   });
 
   return (
@@ -111,14 +111,7 @@ export function PlayersListPage() {
           </Field>
 
           <Field label="Ciudad">
-            <Select value={city ?? ''} onChange={(e) => setCity(e.target.value || null)}>
-              <option value="">Todas</option>
-              {cities?.map((name) => (
-                <option key={name} value={name}>
-                  {name}
-                </option>
-              ))}
-            </Select>
+            <CityFilter value={cityId} onChange={setCityId} />
           </Field>
         </div>
       </ArcadePanel>

@@ -32,10 +32,6 @@ export function useTopPlayers(limit = 10) {
   });
 }
 
-export function useCities() {
-  return useQuery({ queryKey: queryKeys.players({ cities: true }), queryFn: service.listCities });
-}
-
 /* ------------------------------ Administración ---------------------------- */
 
 export function useAdminPlayers(search: string) {

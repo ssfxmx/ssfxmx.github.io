@@ -34,6 +34,7 @@ import { AdminEventForm, AdminEventsList } from '@/modules/admin/pages/AdminEven
 import { AdminResultsForm, AdminResultsList } from '@/modules/admin/pages/AdminResults';
 import { AdminPlayersList } from '@/modules/admin/pages/AdminPlayers';
 import { AdminCharactersPage } from '@/modules/admin/pages/AdminCharacters';
+import { AdminCitiesPage } from '@/modules/admin/pages/AdminCities';
 import {
   AdminTutorialForm,
   AdminTutorialsList,
@@ -143,6 +144,7 @@ export const router = createBrowserRouter(
 
         { path: routes.adminPlayers, element: <AdminPlayersList /> },
         { path: routes.adminCharacters, element: <AdminCharactersPage /> },
+        { path: routes.adminCities, element: <AdminCitiesPage /> },
 
         { path: routes.adminTutorials, element: <AdminTutorialsList /> },
         { path: '/admin/tutoriales/:id', element: <AdminTutorialForm /> },

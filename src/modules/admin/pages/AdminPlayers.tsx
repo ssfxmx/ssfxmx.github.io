@@ -7,6 +7,11 @@ import { formatDate } from '@/shared/utils/date';
 import { COUNTRIES, countryName } from '@/shared/utils/format';
 import { useCharacters } from '@/shared/hooks';
 import {
+  CitySelect,
+  useCities,
+  type CityValue,
+} from '@/shared/components/ui/CitySelect';
+import {
   Alert,
   ArcadePanel,
   Badge,
@@ -56,9 +61,15 @@ function EditPlayerDialog({
   const { data: characters } = useCharacters();
   const update = useUpdatePlayer();
 
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<{
+    nickname: string;
+    city: CityValue;
+    country_code: string;
+    bio: string;
+    main_character_id: number;
+  }>({
     nickname: '',
-    city: '',
+    city: { cityId: null, cityCustom: '' },
     country_code: 'MX',
     bio: '',
     main_character_id: 0,
@@ -70,7 +81,7 @@ function EditPlayerDialog({
     setError('');
     setForm({
       nickname: player.nickname,
-      city: player.city ?? '',
+      city: { cityId: player.city_id, cityCustom: player.city_custom ?? '' },
       country_code: player.country_code,
       bio: player.bio ?? '',
       main_character_id: player.main_character_id ?? 0,
@@ -98,7 +109,8 @@ function EditPlayerDialog({
         id: player!.id,
         input: {
           nickname,
-          city: form.city.trim() || null,
+          city_id: form.city.cityId,
+          city_custom: form.city.cityId ? null : form.city.cityCustom.trim() || null,
           country_code: form.country_code,
           bio: form.bio.trim() || null,
           main_character_id: form.main_character_id || null,
@@ -133,28 +145,23 @@ function EditPlayerDialog({
             />
           </Field>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="País">
-              <Select
-                value={form.country_code}
-                onChange={(e) => setForm((p) => ({ ...p, country_code: e.target.value }))}
-              >
-                {COUNTRIES.map((country) => (
-                  <option key={country.code} value={country.code}>
-                    {country.name}
-                  </option>
-                ))}
-              </Select>
-            </Field>
+          <Field label="País">
+            <Select
+              value={form.country_code}
+              onChange={(e) => setForm((p) => ({ ...p, country_code: e.target.value }))}
+            >
+              {COUNTRIES.map((country) => (
+                <option key={country.code} value={country.code}>
+                  {country.name}
+                </option>
+              ))}
+            </Select>
+          </Field>
 
-            <Field label="Ciudad">
-              <Input
-                value={form.city}
-                onChange={(e) => setForm((p) => ({ ...p, city: e.target.value }))}
-                maxLength={80}
-              />
-            </Field>
-          </div>
+          <CitySelect
+            value={form.city}
+            onChange={(city) => setForm((p) => ({ ...p, city }))}
+          />
 
           <Field label="Personaje principal">
             <Select
@@ -215,6 +222,11 @@ export function AdminPlayersList() {
   const { profile } = useSession();
   const [search, setSearch] = useState('');
   const { data, isLoading } = useAdminPlayers(search);
+  const { data: cities } = useCities();
+
+  /** El perfil guarda la ciudad como referencia o como texto libre. */
+  const cityLabel = (row: Profile) =>
+    cities?.find((c) => c.id === row.city_id)?.name ?? row.city_custom ?? '';
 
   const setStatus = useSetPlayerStatus();
   const setRole = useSetPlayerRole();
@@ -256,7 +268,7 @@ export function AdminPlayersList() {
             {row.nickname}
           </Link>
           <p className="truncate text-xs text-ink-dim">
-            {row.city ? `${row.city}, ` : ''}
+            {cityLabel(row) ? `${cityLabel(row)}, ` : ''}
             {countryName(row.country_code)}
           </p>
         </div>

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { LogOut, Menu, Shield, User, X } from 'lucide-react';
 import { MAIN_NAV, routes } from '@/shared/constants/routes';
 import { useSession } from '@/modules/auth/hooks/useSession';
@@ -16,6 +16,22 @@ export function PublicLayout() {
   const { isAuthenticated, isAdmin, profile } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Se cierra al cambiar de página. Sin esto, navegar desde el menú deja la
+  // capa abierta encima del contenido nuevo.
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location.pathname]);
+
+  // Bloquea el desplazamiento del fondo mientras el menú está abierto: en móvil
+  // se nota mucho que la página de atrás siga moviéndose.
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [menuOpen]);
 
   async function handleSignOut() {
     await signOut();
@@ -82,21 +98,34 @@ export function PublicLayout() {
             aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
             aria-expanded={menuOpen}
           >
-            {menuOpen ? <Menu size={22} /> : <Menu size={22} />}
+            {menuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
 
         <div className="h-0.5 bg-gradient-to-r from-primary via-magenta to-cyan" />
       </header>
 
-      {/* Menú móvil */}
+      {/* Menú móvil
+          El fondo va SÓLIDO, sin transparencia. La versión anterior usaba
+          bg-base/98, pero 98 no está en la escala de opacidad de Tailwind: la
+          clase se descartaba en silencio y el menú quedaba transparente sobre
+          el contenido de la página.
+
+          z-[60] lo pone por encima de la cabecera (z-50). Antes iba por debajo
+          y hacía falta compensar con relleno superior. */}
       {menuOpen && (
-        <div className="fixed inset-0 z-40 bg-base/98 pt-16 lg:hidden">
-          <div className="flex justify-end px-4">
-            <button className="p-2 text-ink-soft" onClick={() => setMenuOpen(false)} aria-label="Cerrar menú">
+        <div className="fixed inset-0 z-[60] flex flex-col overflow-y-auto bg-base lg:hidden">
+          <div className="flex items-center justify-between border-b border-edge px-4 py-3">
+            <span className="font-display text-sm text-primary">SSF2X</span>
+            <button
+              className="p-2 text-ink-soft"
+              onClick={() => setMenuOpen(false)}
+              aria-label="Cerrar menú"
+            >
               <X size={24} />
             </button>
           </div>
+
           <nav className="flex flex-col gap-1 px-6 py-4">
             {MAIN_NAV.map((item) => (
               <NavLink

@@ -40,11 +40,30 @@ export interface Character {
   is_active: boolean;
 }
 
+export interface City {
+  id: number;
+  name: string;
+  state: string;
+  country_code: string;
+  aliases: string[];
+  display_order: number;
+  is_active: boolean;
+}
+
+/** Ciudad escrita a mano que todavía no está en el catálogo. */
+export interface PendingCity {
+  name: string;
+  players: number;
+}
+
 export interface Profile {
   id: string;
   nickname: string;
   country_code: string;
-  city: string | null;
+  /** Referencia al catálogo. Nulo cuando la persona eligió "Otro". */
+  city_id: number | null;
+  /** Texto libre. Solo tiene valor cuando city_id es nulo. */
+  city_custom: string | null;
   bio: string | null;
   main_character_id: number | null;
   avatar_source: AvatarSource;
@@ -174,6 +193,8 @@ export interface PlayerPublic {
   character_color: string | null;
   character_initials: string | null;
   character_icon_path: string | null;
+  city_id: number | null;
+  city_state: string | null;
 }
 
 export interface EventResultPublic {

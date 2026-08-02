@@ -46,6 +46,7 @@ export const routes = {
   adminResultsEdit: (eventId: string) => `/admin/resultados/${eventId}`,
   adminPlayers: '/admin/jugadores',
   adminCharacters: '/admin/personajes',
+  adminCities: '/admin/ciudades',
   adminTutorials: '/admin/tutoriales',
   adminTutorialsNew: '/admin/tutoriales/nuevo',
   adminTutorialsEdit: (id: string) => `/admin/tutoriales/${id}`,

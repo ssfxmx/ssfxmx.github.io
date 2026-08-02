@@ -18,12 +18,17 @@ export function ResultsTable({ results }: { results: EventResultPublic[] }) {
       <ul className="divide-y divide-edge">
         {results.map((result) => {
           const medal = medalFor(result.position);
+          // Se pasan las iniciales del catálogo, no las dos primeras letras del
+          // nombre: "Chun-Li" debe dar "CH", no "Ch". Y el icono del personaje,
+          // que antes faltaba y hacía que esta tabla mostrara siempre el
+          // monograma aunque el personaje ya tuviera imagen propia.
           const avatar = resolveAvatar({
             avatar_source: result.avatar_source,
             avatar_path: result.avatar_path,
             nickname: result.display_nickname,
-            character_initials: result.character_name?.slice(0, 2),
+            character_initials: result.character_initials,
             character_color: result.character_color,
+            character_icon_path: result.character_icon_path,
           });
 
           return (

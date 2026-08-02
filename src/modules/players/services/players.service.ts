@@ -13,7 +13,7 @@ import type { AccountStatus, PlayerPublic, PlayerStats, Profile, UserRole } from
 export interface PlayerFilters {
   search?: string;
   characterId?: number | null;
-  city?: string | null;
+  cityId?: number | null;
 }
 
 export async function listPlayers(filters: PlayerFilters = {}): Promise<PlayerPublic[]> {
@@ -25,8 +25,10 @@ export async function listPlayers(filters: PlayerFilters = {}): Promise<PlayerPu
   if (filters.characterId) {
     query = query.eq('character_id', filters.characterId);
   }
-  if (filters.city?.trim()) {
-    query = query.ilike('city', `%${filters.city.trim()}%`);
+  // Se filtra por identificador, no por texto. Antes se comparaban cadenas, y
+  // "CDMX" no coincidía con "Ciudad de México" aunque fueran el mismo lugar.
+  if (filters.cityId) {
+    query = query.eq('city_id', filters.cityId);
   }
 
   const { data, error } = await query;
@@ -70,24 +72,6 @@ export async function listTopPlayers(limit = 10): Promise<PlayerStats[]> {
   return (data ?? []) as PlayerStats[];
 }
 
-/** Ciudades presentes, para el filtro del directorio. */
-export async function listCities(): Promise<string[]> {
-  const { data, error } = await supabase
-    .from('players_public')
-    .select('city')
-    .not('city', 'is', null);
-
-  if (error) throw error;
-
-  const cities = new Set(
-    ((data ?? []) as Array<{ city: string | null }>)
-      .map((row) => row.city?.trim())
-      .filter((city): city is string => Boolean(city))
-  );
-
-  return [...cities].sort((a, b) => a.localeCompare(b, 'es'));
-}
-
 /* ------------------------------ Administración ---------------------------- */
 
 export async function listProfilesForAdmin(search?: string): Promise<Profile[]> {
@@ -106,7 +90,8 @@ export async function setPlayerStatus(playerId: string, status: AccountStatus) {
 
 export interface AdminPlayerEdit {
   nickname: string;
-  city: string | null;
+  city_id: number | null;
+  city_custom: string | null;
   country_code: string;
   bio: string | null;
   main_character_id: number | null;
@@ -132,7 +117,8 @@ export async function updatePlayerAsAdmin(playerId: string, input: AdminPlayerEd
     .from('profiles')
     .update({
       nickname: input.nickname.trim(),
-      city: input.city,
+      city_id: input.city_id,
+      city_custom: input.city_id ? null : input.city_custom,
       country_code: input.country_code,
       bio: input.bio,
       main_character_id: input.main_character_id,

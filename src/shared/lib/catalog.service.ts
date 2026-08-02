@@ -1,5 +1,83 @@
 import { supabase } from '@/shared/lib/supabase';
-import type { Character, SiteSetting } from '@/shared/types/database';
+import type {
+  Character,
+  City,
+  PendingCity,
+  SiteSetting,
+} from '@/shared/types/database';
+
+/* ================================ Ciudades ================================ */
+
+export async function listCities(): Promise<City[]> {
+  const { data, error } = await supabase
+    .from('cities')
+    .select('*')
+    .eq('is_active', true)
+    .order('state')
+    .order('name');
+
+  if (error) throw error;
+  return (data ?? []) as City[];
+}
+
+/** Incluye las desactivadas. Solo para el panel. */
+export async function listAllCities(): Promise<City[]> {
+  const { data, error } = await supabase
+    .from('cities')
+    .select('*')
+    .order('state')
+    .order('name');
+
+  if (error) throw error;
+  return (data ?? []) as City[];
+}
+
+/**
+ * Ciudades que la gente escribió a mano y no están en el catálogo.
+ * Es lo que permite al administrador mantener la lista al día sin adivinar.
+ */
+export async function listPendingCities(): Promise<PendingCity[]> {
+  const { data, error } = await supabase.from('pending_cities').select('*');
+  if (error) throw error;
+  return (data ?? []) as PendingCity[];
+}
+
+export async function createCity(name: string, state: string): Promise<City> {
+  const { data, error } = await supabase
+    .from('cities')
+    .insert({ name: name.trim(), state: state.trim() })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data as City;
+}
+
+export async function updateCity(id: number, input: Partial<City>) {
+  const { error } = await supabase.from('cities').update(input).eq('id', id);
+  if (error) throw error;
+}
+
+/**
+ * Promueve una ciudad escrita a mano al catálogo y reasigna a quienes la
+ * habían escrito.
+ *
+ * Se hace en dos pasos desde el cliente en lugar de una función SQL porque son
+ * dos operaciones sencillas y ambas están protegidas por RLS: si quien lo
+ * ejecuta no es administrador, las dos fallan. Una función en la base añadiría
+ * complejidad sin ganar seguridad.
+ */
+export async function promoteCity(customName: string, state: string): Promise<City> {
+  const city = await createCity(customName, state);
+
+  const { error } = await supabase
+    .from('profiles')
+    .update({ city_id: city.id, city_custom: null })
+    .eq('city_custom', customName);
+
+  if (error) throw error;
+  return city;
+}
 
 /**
  * Catálogos y configuración del sitio.

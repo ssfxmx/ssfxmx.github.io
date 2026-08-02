@@ -15,7 +15,10 @@ export interface SignUpInput {
   fullName: string;
   birthDate: string;
   countryCode: string;
-  city: string;
+  /** Ciudad del catálogo. Nulo si la persona eligió "Otro". */
+  cityId: number | null;
+  /** Texto libre. Solo si cityId es nulo. */
+  cityCustom: string;
   mainCharacterId: number;
 }
 
@@ -43,7 +46,10 @@ export async function signUp(input: SignUpInput) {
         full_name: input.fullName.trim(),
         birth_date: input.birthDate,
         country_code: input.countryCode,
-        city: input.city.trim(),
+        // El trigger acepta las dos formas y, si el texto libre coincide con
+        // una ciudad del catálogo o con uno de sus alias, la enlaza solo.
+        city_id: input.cityId ? String(input.cityId) : '',
+        city_custom: input.cityId ? '' : input.cityCustom.trim(),
         main_character_id: String(input.mainCharacterId),
         avatar_source: 'character',
       },
@@ -123,7 +129,8 @@ export async function getOwnProfile(
 }
 
 export interface UpdateProfileInput {
-  city: string | null;
+  city_id: number | null;
+  city_custom: string | null;
   country_code: string;
   bio: string | null;
   main_character_id: number | null;
