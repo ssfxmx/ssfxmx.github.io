@@ -56,11 +56,18 @@ export function PublicLayout() {
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-50 border-b border-edge bg-base/95 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
-          <Link to={routes.home} className="flex items-center gap-3">
-            <span className="font-display text-sm text-primary neon-text">SSF2X</span>
-            <span className="hidden text-xs tracking-[0.3em] text-ink-dim sm:inline">
-              MÉXICO
-            </span>
+          {/* El logotipo contiene el nombre, así que sustituye al texto en vez
+              de acompañarlo. Se sirve en WebP (38 KB frente a los 2,7 MB del
+              original) y con width/height explícitos para que el navegador
+              reserve el espacio y la cabecera no dé un salto al cargar. */}
+          <Link to={routes.home} className="flex shrink-0 items-center">
+            <img
+              src={`${import.meta.env.VITE_BASE_PATH || '/'}logo.webp`}
+              alt="SSF2X México"
+              width={334}
+              height={224}
+              className="h-11 w-auto lg:h-14"
+            />
           </Link>
 
           {/* Navegación de escritorio */}
@@ -124,7 +131,13 @@ export function PublicLayout() {
       {menuOpen && (
         <div className="fixed inset-0 z-[60] flex flex-col overflow-y-auto bg-base lg:hidden">
           <div className="flex items-center justify-between border-b border-edge px-4 py-3">
-            <span className="font-display text-sm text-primary">SSF2X</span>
+            <img
+              src={`${import.meta.env.VITE_BASE_PATH || '/'}logo.webp`}
+              alt="SSF2X México"
+              width={334}
+              height={224}
+              className="h-10 w-auto"
+            />
             <button
               className="p-2 text-ink-soft"
               onClick={() => setMenuOpen(false)}
@@ -191,7 +204,14 @@ export function PublicLayout() {
         <div className="mx-auto max-w-6xl px-4 py-10">
           <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <p className="font-display text-xs text-primary">SSF2X MÉXICO</p>
+              <img
+                src={`${import.meta.env.VITE_BASE_PATH || '/'}logo.webp`}
+                alt="SSF2X México"
+                width={334}
+                height={224}
+                loading="lazy"
+                className="h-16 w-auto"
+              />
               <p className="mt-3 max-w-md text-sm text-ink-dim">
                 Comunidad mexicana de Super Street Fighter II X Grand Master Challenge.
                 Hecho por fanáticos, para fanáticos.
