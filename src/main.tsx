@@ -4,6 +4,7 @@ import { RouterProvider } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@/shared/lib/queryClient';
 import { SessionProvider } from '@/modules/auth/hooks/useSession';
+import { ThemeProvider } from '@/shared/theme/ThemeProvider';
 import { router } from '@/app/router';
 import './styles/index.css';
 
@@ -23,10 +24,12 @@ if (!container) {
 
 createRoot(container).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <SessionProvider>
-        <RouterProvider router={router} />
-      </SessionProvider>
-    </QueryClientProvider>
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <SessionProvider>
+          <RouterProvider router={router} />
+        </SessionProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
   </StrictMode>
 );

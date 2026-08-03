@@ -24,6 +24,7 @@ import {
   Spinner,
 } from '@/shared/components/ui';
 import { FilterBar, yearOptions } from '@/shared/components/ui/FilterBar';
+import { ShareButton } from '@/shared/components/ui/ShareButton';
 import { useResultsByEvent } from '@/modules/results/hooks';
 import { ResultsTable } from '@/modules/results/components/ResultsTable';
 import type { EventRecord } from '@/shared/types/database';
@@ -272,12 +273,22 @@ export function EventDetailPage() {
         image={cover}
       />
 
-      <Link
-        to={routes.events}
-        className="mb-6 inline-flex items-center gap-2 text-sm text-ink-soft hover:text-primary"
-      >
-        <ArrowLeft size={16} /> Volver a eventos
-      </Link>
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <Link
+          to={routes.events}
+          className="inline-flex items-center gap-2 text-sm text-ink-soft hover:text-primary"
+        >
+          <ArrowLeft size={16} /> Volver a eventos
+        </Link>
+
+        {/* La fecha va en el texto que se comparte: un enlace suelto en un chat
+            no dice cuándo es, y eso es justo lo que hay que saber para decidir
+            si se entra. */}
+        <ShareButton
+          title={data.name}
+          text={`${formatDateTime(data.starts_at)} · ${MODE_LABELS[data.mode] ?? data.mode}`}
+        />
+      </div>
 
       <header className="mb-8 space-y-4">
         <div className="flex flex-wrap items-center gap-2">

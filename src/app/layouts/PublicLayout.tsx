@@ -6,7 +6,8 @@ import { useSession } from '@/modules/auth/hooks/useSession';
 import { signOut } from '@/modules/auth/services/auth.service';
 import { Button, LinkButton } from '@/shared/components/ui';
 import { SocialLinks } from '@/shared/components/ui/SocialLinks';
-import { useLogoUrl } from '@/shared/hooks';
+import { useLogoUrl, useScrollToTop } from '@/shared/hooks';
+import { ThemeToggle } from '@/shared/theme/ThemeToggle';
 
 /**
  * Estructura del sitio público: cabecera, contenido y pie.
@@ -26,6 +27,11 @@ export function PublicLayout() {
   useEffect(() => {
     setMenuOpen(false);
   }, [location.pathname]);
+
+  // El navegador conserva el desplazamiento al cambiar de ruta porque, para él,
+  // nunca se cargó una página nueva. Sin esto, bajar por el archivo de eventos y
+  // abrir uno te dejaba a media ficha, con el título fuera de pantalla.
+  useScrollToTop(location.pathname);
 
   // Bloquea el desplazamiento del fondo mientras el menú está abierto: en móvil
   // se nota mucho que la página de atrás siga moviéndose.
@@ -83,6 +89,7 @@ export function PublicLayout() {
           </nav>
 
           <div className="hidden items-center gap-2 lg:flex">
+            <ThemeToggle />
             {isAdmin && (
               <LinkButton to={routes.admin} variant="ghost" size="sm">
                 <Shield size={15} /> Panel
@@ -109,14 +116,19 @@ export function PublicLayout() {
             )}
           </div>
 
-          <button
-            className="p-2 text-ink-soft lg:hidden"
-            onClick={() => setMenuOpen((open) => !open)}
-            aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
-            aria-expanded={menuOpen}
-          >
-            {menuOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
+          {/* En móvil el interruptor va fuera del menú desplegable: cambiar de
+              tema es algo que se hace mirando la página, no navegando. */}
+          <div className="flex items-center gap-1 lg:hidden">
+            <ThemeToggle />
+            <button
+              className="p-2 text-ink-soft"
+              onClick={() => setMenuOpen((open) => !open)}
+              aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
+              aria-expanded={menuOpen}
+            >
+              {menuOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
+          </div>
         </div>
 
         <div className="h-0.5 bg-gradient-to-r from-primary via-magenta to-steel" />

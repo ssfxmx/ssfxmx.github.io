@@ -105,11 +105,13 @@
     );
   }
 
-  /* Texto de título con resplandor tenue de tubo de neón */
+  /* Texto de título con resplandor tenue de tubo de neón.
+     La intensidad sale de --neon-strength, que en modo claro vale 0: un
+     resplandor sobre papel no se lee como neón, se lee como texto borroso. */
   .neon-text {
     text-shadow:
-      0 0 8px rgb(var(--color-primary) / 0.5),
-      0 0 24px rgb(var(--color-primary) / 0.2);
+      0 0 8px rgb(var(--color-primary) / calc(0.5 * var(--neon-strength))),
+      0 0 24px rgb(var(--color-primary) / calc(0.2 * var(--neon-strength)));
   }
 
   /* ==========================================================================

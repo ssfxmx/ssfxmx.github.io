@@ -5,22 +5,6 @@ export function useHighlights() {
   return useQuery({ queryKey: ['highlights'], queryFn: service.listHighlights });
 }
 
-export function useHighlightDetail(slug: string | undefined) {
-  return useQuery({
-    queryKey: ['highlights', 'detail', slug],
-    queryFn: () => service.getHighlightBySlug(slug as string),
-    enabled: Boolean(slug),
-  });
-}
-
-export function useHighlightsByEvent(eventId: string | undefined) {
-  return useQuery({
-    queryKey: ['highlights', 'event', eventId],
-    queryFn: () => service.listHighlightsByEvent(eventId as string),
-    enabled: Boolean(eventId),
-  });
-}
-
 /* ------------------------------ Administración ---------------------------- */
 
 export function useAdminHighlights() {

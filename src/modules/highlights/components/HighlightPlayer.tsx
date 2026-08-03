@@ -1,5 +1,5 @@
 import { ExternalLink, Play } from 'lucide-react';
-import { ArcadePanel, Badge } from '@/shared/components/ui';
+import { Badge } from '@/shared/components/ui';
 import {
   detectOrientation,
   embedUrl,
@@ -97,54 +97,3 @@ export function PlatformBadge({ platform }: { platform: Platform }) {
   return <Badge tone={PLATFORM_TONES[platform]}>{PLATFORM_LABELS[platform]}</Badge>;
 }
 
-/** Tarjeta de highlight para la galería. */
-export function HighlightCard({
-  title,
-  description,
-  url,
-  platform,
-  embedId,
-  thumbnailUrl,
-  eventName,
-  featured = false,
-}: {
-  title: string;
-  description?: string | null;
-  url: string;
-  platform: Platform;
-  embedId: string | null;
-  thumbnailUrl?: string | null;
-  eventName?: string | null;
-  featured?: boolean;
-}) {
-  return (
-    <ArcadePanel
-      className={[
-        'flex flex-col overflow-hidden',
-        featured ? 'border-primary/50 shadow-neon' : '',
-      ].join(' ')}
-    >
-      <HighlightPlayer
-        platform={platform}
-        embedId={embedId}
-        url={url}
-        title={title}
-        thumbnailUrl={thumbnailUrl}
-      />
-
-      <div className="flex flex-col gap-2 p-4">
-        <div className="flex flex-wrap items-center gap-2">
-          {featured && <Badge tone="primary">Destacado</Badge>}
-          <PlatformBadge platform={platform} />
-          {eventName && <span className="text-xs text-ink-dim">{eventName}</span>}
-        </div>
-
-        <h3 className="font-semibold leading-snug text-ink">{title}</h3>
-
-        {description && (
-          <p className="text-sm leading-relaxed text-ink-soft">{description}</p>
-        )}
-      </div>
-    </ArcadePanel>
-  );
-}

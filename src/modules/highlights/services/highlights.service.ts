@@ -39,27 +39,6 @@ export async function listHighlights(): Promise<HighlightPublic[]> {
   return (data ?? []) as HighlightPublic[];
 }
 
-export async function getHighlightBySlug(slug: string): Promise<HighlightPublic | null> {
-  const { data, error } = await supabase
-    .from('highlights_public')
-    .select('*')
-    .eq('slug', slug)
-    .maybeSingle();
-
-  if (error) throw error;
-  return (data as HighlightPublic) ?? null;
-}
-
-export async function listHighlightsByEvent(eventId: string): Promise<HighlightPublic[]> {
-  const { data, error } = await supabase
-    .from('highlights_public')
-    .select('*')
-    .eq('event_id', eventId)
-    .order('display_order');
-
-  if (error) throw error;
-  return (data ?? []) as HighlightPublic[];
-}
 
 /* ------------------------------ Administración ---------------------------- */
 

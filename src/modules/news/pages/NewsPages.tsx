@@ -9,6 +9,7 @@ import { stripMarkdown, truncate } from '@/shared/utils/format';
 import { PageMeta } from '@/shared/components/seo/PageMeta';
 import { Markdown } from '@/shared/components/ui/Markdown';
 import { FilterBar, yearOptions } from '@/shared/components/ui/FilterBar';
+import { ShareButton } from '@/shared/components/ui/ShareButton';
 import {
   ArcadePanel,
   Badge,
@@ -163,12 +164,19 @@ export function NewsDetailPage() {
         image={cover}
       />
 
-      <Link
-        to={routes.news}
-        className="mb-6 inline-flex items-center gap-2 text-sm text-ink-soft hover:text-primary"
-      >
-        <ArrowLeft size={16} /> Volver a noticias
-      </Link>
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <Link
+          to={routes.news}
+          className="inline-flex items-center gap-2 text-sm text-ink-soft hover:text-primary"
+        >
+          <ArrowLeft size={16} /> Volver a noticias
+        </Link>
+
+        <ShareButton
+          title={data.title}
+          text={data.excerpt ?? undefined}
+        />
+      </div>
 
       <header className="mb-8">
         <h1 className="font-display text-xl leading-relaxed text-primary neon-text sm:text-2xl">

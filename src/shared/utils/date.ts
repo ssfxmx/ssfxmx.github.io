@@ -1,4 +1,4 @@
-import { format, formatDistanceToNow, isPast, isToday, isTomorrow } from 'date-fns';
+import { format, formatDistanceToNow, isToday, isTomorrow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { toZonedTime } from 'date-fns-tz';
 
@@ -26,11 +26,6 @@ export function formatDate(value: string | Date): string {
   return format(zoned(value), "d 'de' MMMM 'de' yyyy", { locale: es });
 }
 
-/** "14 abr 2026" */
-export function formatDateShort(value: string | Date): string {
-  return format(zoned(value), 'd MMM yyyy', { locale: es });
-}
-
 /** "14 de abril de 2026, 20:00 CDMX" */
 export function formatDateTime(value: string | Date): string {
   return `${format(zoned(value), "d 'de' MMMM 'de' yyyy, HH:mm", { locale: es })} ${TIMEZONE_LABEL}`;
@@ -54,9 +49,6 @@ export function formatEventDay(value: string | Date): string {
   return formatDate(value);
 }
 
-export function isPastDate(value: string | Date): boolean {
-  return isPast(new Date(value));
-}
 
 /** Valor para <input type="datetime-local"> a partir de un ISO en UTC. */
 export function toDateTimeLocalValue(value: string | null | undefined): string {

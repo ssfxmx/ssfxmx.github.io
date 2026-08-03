@@ -25,13 +25,6 @@ export function usePlayerStats(playerId: string | undefined) {
   });
 }
 
-export function useTopPlayers(limit = 10) {
-  return useQuery({
-    queryKey: queryKeys.players({ top: limit }),
-    queryFn: () => service.listTopPlayers(limit),
-  });
-}
-
 /* ------------------------------ Administración ---------------------------- */
 
 export function useAdminPlayers(search: string) {

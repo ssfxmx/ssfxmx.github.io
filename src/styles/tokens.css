@@ -43,6 +43,10 @@
   --color-orange: 242 101 34; /* el naranja de TURBO */
   --color-steel: 168 196 240; /* azul del degradado de SUPER */
 
+  /* En oscuro el amarillo puro ya es el de texto; el alias existe para que los
+     rellenos vivos funcionen igual en los dos temas sin condicionales. */
+  --color-primary-vivid: 245 198 63;
+
   --color-success: 61 220 132;
   --color-danger: 255 71 87;
 
@@ -53,6 +57,61 @@
 
   /* Intensidad de las scanlines. Se pone a 0 con prefers-reduced-motion. */
   --scanline-opacity: 0.025;
+
+  /* Fuerza del resplandor de neón. En claro se apaga: ver más abajo. */
+  --neon-strength: 1;
+}
+
+/* ==========================================================================
+   MODO CLARO
+   ==========================================================================
+   No es el mismo tema con los colores invertidos. Un acento claro sobre fondo
+   oscuro y ese mismo acento sobre fondo claro no se comportan igual: el
+   amarillo del logotipo tiene 12:1 sobre el navy y 1.7:1 sobre papel, o sea que
+   es ilegible. Así que cada acento conserva su TONO pero cambia de luminosidad
+   hasta cumplir contraste. Sigue siendo la paleta del logotipo; lo que cambia
+   es de qué lado del fondo está.
+
+   Medido contra el fondo claro (#F7F5EF):
+
+     Texto principal    16.1:1  AAA
+     Texto secundario    7.5:1  AAA
+     Texto tenue         4.9:1  AA
+     Ámbar (primary)     6.4:1  AA
+     Magenta             6.4:1  AA
+     Naranja             4.8:1  AA
+     Azul acero          7.9:1  AAA
+
+   Los tonos vivos del logotipo no desaparecen: siguen en -deep, para rellenos
+   y bordes, donde el contraste de texto no aplica.
+   ========================================================================== */
+:root[data-theme='light'] {
+  /* Papel cálido, no blanco puro: el blanco puro deslumbra y hace que el
+     amarillo del logotipo se vea sucio. */
+  --color-base: 247 245 239;
+  --color-surface: 255 255 255;
+  --color-surface-raised: 237 234 226;
+
+  --color-edge: 208 204 192;
+
+  --color-primary: 122 82 0; /* ámbar profundo: el amarillo, legible */
+  --color-primary-vivid: 245 198 63; /* el amarillo puro, para rellenos */
+  --color-magenta: 173 20 87;
+  --color-magenta-deep: 236 30 121;
+  --color-orange: 194 65 12;
+  --color-steel: 44 74 138;
+
+  --color-success: 21 105 58;
+  --color-danger: 185 28 28;
+
+  --color-ink: 23 23 46;
+  --color-ink-soft: 74 78 105;
+  --color-ink-dim: 100 104 132;
+
+  /* Las scanlines son negras: sobre papel se ven como suciedad, no como tubo
+     de rayos catódicos. Y el neón no existe a plena luz. */
+  --scanline-opacity: 0;
+  --neon-strength: 0;
 }
 
 /* Los efectos son condimento, no plato principal.

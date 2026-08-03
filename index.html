@@ -35,6 +35,35 @@
   </head>
   <body>
     <div id="root"></div>
+
+    <!-- Fija el tema ANTES de pintar nada.
+         Si esto se hiciera desde React, el navegador ya habría dibujado el
+         fondo por defecto y quien tenga el modo claro vería un fogonazo negro
+         en cada carga. Va en línea y sin async a propósito: bloquear un
+         milisegundo aquí es preferible a ese parpadeo. -->
+    <script>
+      (function () {
+        try {
+          var guardado = localStorage.getItem('ssf2x-theme');
+          var tema =
+            guardado === 'light' || guardado === 'dark'
+              ? guardado
+              : window.matchMedia('(prefers-color-scheme: light)').matches
+                ? 'light'
+                : 'dark';
+          document.documentElement.setAttribute('data-theme', tema);
+          document.documentElement.style.colorScheme = tema;
+          if (tema === 'light') {
+            document
+              .querySelector('meta[name="theme-color"]')
+              .setAttribute('content', '#F7F5EF');
+          }
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -58,20 +58,6 @@ export async function getPlayerStats(playerId: string): Promise<PlayerStats | nu
   return (data as PlayerStats) ?? null;
 }
 
-/** Ranking por podios. Base del futuro módulo de reportes. */
-export async function listTopPlayers(limit = 10): Promise<PlayerStats[]> {
-  const { data, error } = await supabase
-    .from('player_stats')
-    .select('*')
-    .gt('tournaments_played', 0)
-    .order('first_places', { ascending: false })
-    .order('podiums', { ascending: false })
-    .limit(limit);
-
-  if (error) throw error;
-  return (data ?? []) as PlayerStats[];
-}
-
 /* ------------------------------ Administración ---------------------------- */
 
 export async function listProfilesForAdmin(search?: string): Promise<Profile[]> {
