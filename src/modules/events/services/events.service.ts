@@ -18,16 +18,76 @@ export async function listUpcomingEvents(limit = 20): Promise<EventRecord[]> {
   return (data ?? []) as EventRecord[];
 }
 
-export async function listPastEvents(limit = 50): Promise<EventRecord[]> {
-  const { data, error } = await supabase
+export interface PastEventsResult {
+  items: EventRecord[];
+  total: number;
+}
+
+export interface EventFilters {
+  /** Texto libre: busca en el nombre del evento. */
+  search?: string;
+  /** Año como cadena, p. ej. "2021". Vacío = todos. */
+  year?: string;
+  /** Tipo de evento. Vacío = todos. */
+  kind?: string;
+}
+
+/**
+ * Archivo de eventos pasados, filtrado y paginado EN EL SERVIDOR.
+ *
+ * Antes esta función traía como mucho 50 eventos y no lo decía en ninguna
+ * parte. Con 25 en el historial nadie lo habría notado; el día que la comunidad
+ * llegara al evento 51, los más antiguos habrían desaparecido del sitio en
+ * silencio, sin error ni aviso. Un límite invisible es peor que no tener
+ * archivo, porque nadie sabe que le falta algo.
+ */
+export async function listPastEvents(
+  page = 1,
+  pageSize = 12,
+  filters: EventFilters = {}
+): Promise<PastEventsResult> {
+  const from = (page - 1) * pageSize;
+
+  let query = supabase
     .from('events')
-    .select('*')
+    .select('*', { count: 'exact' })
     .in('status', ['finished', 'cancelled'])
-    .order('starts_at', { ascending: false })
-    .limit(limit);
+    .order('starts_at', { ascending: false });
+
+  const search = filters.search?.trim();
+  if (search) {
+    query = query.ilike('name', `%${search.replace(/[,()]/g, ' ')}%`);
+  }
+
+  if (filters.year) {
+    query = query
+      .gte('starts_at', `${filters.year}-01-01T00:00:00Z`)
+      .lt('starts_at', `${Number(filters.year) + 1}-01-01T00:00:00Z`);
+  }
+
+  if (filters.kind) {
+    query = query.eq('kind', filters.kind);
+  }
+
+  const { data, error, count } = await query.range(from, from + pageSize - 1);
 
   if (error) throw error;
-  return (data ?? []) as EventRecord[];
+  return { items: (data ?? []) as EventRecord[], total: count ?? 0 };
+}
+
+/** Año del evento pasado más antiguo, para el desplegable de años. */
+export async function getOldestEventYear(): Promise<number | null> {
+  const { data, error } = await supabase
+    .from('events')
+    .select('starts_at')
+    .in('status', ['finished', 'cancelled'])
+    .order('starts_at', { ascending: true })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) throw error;
+  if (!data?.starts_at) return null;
+  return new Date(data.starts_at).getFullYear();
 }
 
 /** Todos los eventos visibles al público, para el calendario. */

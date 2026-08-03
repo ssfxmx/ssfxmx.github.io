@@ -9,10 +9,24 @@ export function useUpcomingEvents(limit = 20) {
   });
 }
 
-export function usePastEvents() {
+export function usePastEvents(
+  page = 1,
+  pageSize = 12,
+  filters: service.EventFilters = {}
+) {
   return useQuery({
-    queryKey: queryKeys.events({ past: true }),
-    queryFn: () => service.listPastEvents(),
+    queryKey: queryKeys.events({ past: true, page, pageSize, ...filters }),
+    queryFn: () => service.listPastEvents(page, pageSize, filters),
+    placeholderData: (previous) => previous,
+  });
+}
+
+/** Año del evento pasado más antiguo, para el desplegable de años. */
+export function useOldestEventYear() {
+  return useQuery({
+    queryKey: ['events', 'oldest-year'],
+    queryFn: service.getOldestEventYear,
+    staleTime: 60 * 60 * 1000,
   });
 }
 

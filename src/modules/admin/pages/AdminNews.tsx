@@ -2,7 +2,11 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { routes } from '@/shared/constants/routes';
 import { friendlyError } from '@/shared/lib/supabase';
-import { formatDate } from '@/shared/utils/date';
+import {
+  formatDate,
+  fromDateTimeLocalValue,
+  toDateTimeLocalValue,
+} from '@/shared/utils/date';
 import { truncate } from '@/shared/utils/format';
 import {
   Alert,
@@ -148,6 +152,7 @@ export function AdminNewsForm() {
     cover_path: null as string | null,
     status: 'draft' as ContentStatus,
     is_featured: false,
+    published_at: '',
   });
   const [error, setError] = useState('');
   const [showPreview, setShowPreview] = useState(false);
@@ -161,6 +166,7 @@ export function AdminNewsForm() {
       cover_path: existing.cover_path,
       status: existing.status,
       is_featured: existing.is_featured,
+      published_at: toDateTimeLocalValue(existing.published_at),
     });
   }, [existing]);
 
@@ -186,6 +192,11 @@ export function AdminNewsForm() {
       cover_path: form.cover_path,
       status: form.status,
       is_featured: form.is_featured,
+      // Si se deja vacía al publicar, el trigger de la base pone la de hoy.
+      // Rellenarla permite cargar noticias antiguas con su fecha real.
+      published_at: form.published_at
+        ? fromDateTimeLocalValue(form.published_at)
+        : null,
     };
 
     try {
@@ -281,6 +292,17 @@ export function AdminNewsForm() {
               <option value="published">Publicada — visible para todos</option>
               <option value="archived">Archivada</option>
             </Select>
+          </Field>
+
+          <Field
+            label="Fecha de publicación"
+            hint="Déjala vacía y se usa la de hoy. Rellénala para cargar una noticia antigua con su fecha real: el listado se ordena por este campo."
+          >
+            <Input
+              type="datetime-local"
+              value={form.published_at}
+              onChange={(e) => setForm((prev) => ({ ...prev, published_at: e.target.value }))}
+            />
           </Field>
 
           <label className="flex cursor-pointer items-center gap-3 text-sm text-ink-soft">

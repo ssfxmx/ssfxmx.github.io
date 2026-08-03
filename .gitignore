@@ -16,3 +16,7 @@ Thumbs.db
 *.log
 npm-debug.log*
 .supabase
+
+# Miniaturas descargadas para subir a Supabase Storage. Son material de paso:
+# el destino final es el bucket 'media', no el repositorio.
+miniaturas-slc/

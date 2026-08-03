@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { routes } from '@/shared/constants/routes';
 import { storagePublicUrl } from '@/shared/lib/supabase';
+import { useDebounce } from '@/shared/hooks';
 import { formatDate, formatRelative } from '@/shared/utils/date';
 import { stripMarkdown, truncate } from '@/shared/utils/format';
 import { PageMeta } from '@/shared/components/seo/PageMeta';
 import { Markdown } from '@/shared/components/ui/Markdown';
+import { FilterBar, yearOptions } from '@/shared/components/ui/FilterBar';
 import {
   ArcadePanel,
   Badge,
@@ -17,7 +19,7 @@ import {
   Spinner,
 } from '@/shared/components/ui';
 import type { News } from '@/shared/types/database';
-import { useNewsDetail, useNewsList } from '../hooks';
+import { useNewsDetail, useNewsList, useOldestNewsYear } from '../hooks';
 
 const PAGE_SIZE = 9;
 
@@ -60,9 +62,25 @@ export function NewsCard({ item }: { item: News }) {
 
 export function NewsListPage() {
   const [page, setPage] = useState(1);
-  const { data, isLoading, isError, refetch } = useNewsList(page, PAGE_SIZE);
+  const [search, setSearch] = useState('');
+  const [year, setYear] = useState('');
+
+  // El texto se retrasa para no lanzar una consulta por cada tecla.
+  const debouncedSearch = useDebounce(search, 300);
+  const filters = { search: debouncedSearch, year };
+
+  const { data, isLoading, isError, refetch } = useNewsList(page, PAGE_SIZE, filters);
+  const oldestYear = useOldestNewsYear();
+
+  // Al cambiar un filtro hay que volver a la primera página. Si estabas en la
+  // página 3 y el nuevo filtro deja cinco resultados, te quedarías mirando una
+  // página vacía sin entender por qué.
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch, year]);
 
   const totalPages = Math.max(1, Math.ceil((data?.total ?? 0) / PAGE_SIZE));
+  const isFiltering = debouncedSearch.trim() !== '' || year !== '';
 
   return (
     <>
@@ -72,13 +90,37 @@ export function NewsListPage() {
       />
       <SectionTitle>NOTICIAS</SectionTitle>
 
+      <FilterBar
+        search={search}
+        onSearchChange={setSearch}
+        searchPlaceholder="Buscar por título…"
+        filters={[
+          {
+            value: year,
+            onChange: setYear,
+            options: yearOptions(oldestYear.data ?? null),
+            allLabel: 'Todos los años',
+            ariaLabel: 'Filtrar por año',
+          },
+        ]}
+        resultLabel={
+          data ? `${data.total} ${data.total === 1 ? 'noticia' : 'noticias'}` : undefined
+        }
+      />
+
       {isLoading && <Spinner />}
       {isError && <ErrorState onRetry={() => refetch()} />}
 
+      {/* Se distingue "no hay nada publicado" de "tu búsqueda no encontró
+          nada": son situaciones distintas y la salida de cada una también. */}
       {data && data.items.length === 0 && (
         <EmptyState
-          title="Todavía no hay noticias"
-          message="Cuando se publique la primera, aparecerá aquí."
+          title={isFiltering ? 'Sin resultados' : 'Todavía no hay noticias'}
+          message={
+            isFiltering
+              ? 'Prueba con otras palabras o quita el filtro de año.'
+              : 'Cuando se publique la primera, aparecerá aquí.'
+          }
         />
       )}
 

@@ -2,10 +2,28 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/shared/lib/queryClient';
 import * as service from '../services/news.service';
 
-export function useNewsList(page: number, pageSize = 9) {
+export function useNewsList(
+  page: number,
+  pageSize = 9,
+  filters: service.NewsFilters = {}
+) {
   return useQuery({
-    queryKey: queryKeys.news({ page, pageSize }),
-    queryFn: () => service.listNews(page, pageSize),
+    // Los filtros entran en la clave: sin esto, cambiar de año mostraría los
+    // resultados cacheados del anterior hasta que llegara la respuesta.
+    queryKey: queryKeys.news({ page, pageSize, ...filters }),
+    queryFn: () => service.listNews(page, pageSize, filters),
+    // Evita el parpadeo a "cargando" con cada tecla del buscador: se mantiene
+    // el listado anterior en pantalla hasta que llega el nuevo.
+    placeholderData: (previous) => previous,
+  });
+}
+
+/** Año de la noticia más antigua. Cambia una vez al año, se cachea de sobra. */
+export function useOldestNewsYear() {
+  return useQuery({
+    queryKey: ['news', 'oldest-year'],
+    queryFn: service.getOldestNewsYear,
+    staleTime: 60 * 60 * 1000,
   });
 }
 

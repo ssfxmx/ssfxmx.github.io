@@ -1,8 +1,9 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, CalendarDays, ExternalLink, MapPin, Radio, Users } from 'lucide-react';
 import { routes } from '@/shared/constants/routes';
 import { storagePublicUrl } from '@/shared/lib/supabase';
+import { useDebounce } from '@/shared/hooks';
 import {
   formatDate,
   formatDateTime,
@@ -18,22 +19,54 @@ import {
   EmptyState,
   ErrorState,
   LinkButton,
+  Pagination,
   SectionTitle,
   Spinner,
 } from '@/shared/components/ui';
+import { FilterBar, yearOptions } from '@/shared/components/ui/FilterBar';
 import { useResultsByEvent } from '@/modules/results/hooks';
 import { ResultsTable } from '@/modules/results/components/ResultsTable';
 import type { EventRecord } from '@/shared/types/database';
-import { usePastEvents, useEventDetail, useUpcomingEvents, useVisibleEvents } from '../hooks';
+import {
+  useEventDetail,
+  useOldestEventYear,
+  usePastEvents,
+  useUpcomingEvents,
+  useVisibleEvents,
+} from '../hooks';
 import { EventCard, EventStatusBadge, KIND_LABELS, MODE_LABELS } from '../components/EventBits';
 
 /* ========================================================================== */
 /* Listado                                                                     */
 /* ========================================================================== */
 
+const PAST_PAGE_SIZE = 12;
+
 export function EventsListPage() {
   const upcoming = useUpcomingEvents();
-  const past = usePastEvents();
+
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('');
+  const [year, setYear] = useState('');
+  const [kind, setKind] = useState('');
+
+  const debouncedSearch = useDebounce(search, 300);
+  const past = usePastEvents(page, PAST_PAGE_SIZE, {
+    search: debouncedSearch,
+    year,
+    kind,
+  });
+  const oldestYear = useOldestEventYear();
+
+  // Vuelve a la primera página al cambiar cualquier filtro: si no, se puede
+  // acabar en una página que ya no existe dentro del nuevo resultado.
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch, year, kind]);
+
+  const total = past.data?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / PAST_PAGE_SIZE));
+  const isFiltering = debouncedSearch.trim() !== '' || year !== '' || kind !== '';
 
   return (
     <>
@@ -70,16 +103,58 @@ export function EventsListPage() {
 
       <div className="mt-16">
         <SectionTitle>EVENTOS PASADOS</SectionTitle>
+
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Buscar por nombre…"
+          filters={[
+            {
+              value: year,
+              onChange: setYear,
+              options: yearOptions(oldestYear.data ?? null),
+              allLabel: 'Todos los años',
+              ariaLabel: 'Filtrar por año',
+            },
+            {
+              value: kind,
+              onChange: setKind,
+              options: Object.entries(KIND_LABELS).map(([value, label]) => ({
+                value,
+                label,
+              })),
+              allLabel: 'Todos los tipos',
+              ariaLabel: 'Filtrar por tipo de evento',
+            },
+          ]}
+          resultLabel={
+            past.data ? `${total} ${total === 1 ? 'evento' : 'eventos'}` : undefined
+          }
+        />
+
         {past.isLoading && <Spinner />}
-        {past.data?.length === 0 && (
-          <EmptyState title="Todavía no hay historial" message="Aquí quedará el archivo de torneos." />
+        {past.isError && <ErrorState onRetry={() => past.refetch()} />}
+
+        {past.data && past.data.items.length === 0 && (
+          <EmptyState
+            title={isFiltering ? 'Sin resultados' : 'Todavía no hay historial'}
+            message={
+              isFiltering
+                ? 'Prueba con otras palabras o quita alguno de los filtros.'
+                : 'Aquí quedará el archivo de torneos.'
+            }
+          />
         )}
-        {past.data && past.data.length > 0 && (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {past.data.map((event) => (
-              <EventCard key={event.id} event={event} />
-            ))}
-          </div>
+
+        {past.data && past.data.items.length > 0 && (
+          <>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {past.data.items.map((event) => (
+                <EventCard key={event.id} event={event} />
+              ))}
+            </div>
+            <Pagination page={page} totalPages={totalPages} onChange={setPage} />
+          </>
         )}
       </div>
     </>
